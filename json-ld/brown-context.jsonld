@@ -1,0 +1,75 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "schema": "https://schema.org/",
+    "brown": "https://repository.library.brown.edu/vocab#",
+    "name": "schema:name",
+    "url": "schema:url",
+    "description": "schema:description",
+    "sameAs": "schema:sameAs",
+    "CollegeOrUniversity": "schema:CollegeOrUniversity",
+    "Library": "schema:Library",
+    "Organization": "schema:Organization",
+    "department": {
+      "@id": "schema:department",
+      "@type": "@id"
+    },
+    "address": "schema:address",
+    "DigitalDocument": "schema:DigitalDocument",
+    "CreativeWork": "schema:CreativeWork",
+    "identifier": "schema:identifier",
+    "pid": {
+      "@id": "schema:identifier",
+      "@type": "schema:Text"
+    },
+    "title": "schema:name",
+    "primary_title": "schema:name",
+    "abstract": "schema:abstract",
+    "contributor_display": "schema:contributor",
+    "resource_type_ssi": {
+      "@id": "schema:additionalType",
+      "@type": "schema:Text"
+    },
+    "mods_language_ssim": "schema:inLanguage",
+    "mods_subject_ssim": "schema:keywords",
+    "mods_dateCreated_ssim": {
+      "@id": "schema:dateCreated",
+      "@type": "schema:Date"
+    },
+    "object_last_modified_dsi": {
+      "@id": "schema:dateModified",
+      "@type": "schema:DateTime"
+    },
+    "object_size_lsi": {
+      "@id": "schema:contentSize",
+      "@type": "schema:Integer"
+    },
+    "datastreams_ssi": "schema:encoding",
+    "_display_public_bsi": {
+      "@id": "brown:displayPublic",
+      "@type": "schema:Boolean"
+    }
+  },
+  "@id": "https://www.brown.edu",
+  "@type": "CollegeOrUniversity",
+  "name": "Brown University",
+  "url": "https://www.brown.edu",
+  "description": "Private Ivy League research university in Providence, Rhode Island. Its public API footprint is centered on the Brown University Library and the Brown Digital Repository (BDR).",
+  "sameAs": [
+    "https://github.com/Brown-University-Library",
+    "https://www.linkedin.com/school/brown-university/"
+  ],
+  "department": {
+    "@id": "https://library.brown.edu",
+    "@type": "Library",
+    "name": "Brown University Library",
+    "url": "https://library.brown.edu",
+    "department": {
+      "@id": "https://repository.library.brown.edu",
+      "@type": "Organization",
+      "name": "Brown Digital Repository (BDR)",
+      "url": "https://repository.library.brown.edu",
+      "description": "Platform for gathering, indexing, storing, preserving, and making available digital assets from scholarly, instructional, research, and administrative activity at Brown. Exposes a public REST/Solr search API returning DigitalDocument and CreativeWork objects, plus a IIIF image and presentation service."
+    }
+  }
+}

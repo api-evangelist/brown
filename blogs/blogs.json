@@ -1,0 +1,14 @@
+{
+  "repo": "brown",
+  "feeds": [
+    {
+      "source": "https://library.brown.edu",
+      "feed_url": "https://library.brown.edu",
+      "title": "",
+      "saved": 0,
+      "method": "none"
+    }
+  ],
+  "post_count": 0,
+  "fetched": "2026-06-03T00:00:00Z"
+}
