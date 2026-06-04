@@ -1,0 +1,96 @@
+---
+aid: brown
+name: Brown University
+description: >-
+  Brown University is a private Ivy League research university in Providence,
+  Rhode Island, ranked #57 in the QS World University Rankings 2025. Its public
+  developer and API footprint is centered on the Brown University Library, which
+  operates the Brown Digital Repository (BDR) with a documented public REST/search
+  API and a IIIF (International Image Interoperability Framework) image and
+  presentation service. Brown also runs an InCommon-federated Shibboleth/SAML
+  single sign-on identity service and maintains an active "Brown University Library"
+  GitHub organization with hundreds of open-source repositories. Most institutional
+  systems (SIS, course catalog, internal services) are gated behind Brown
+  authentication and are not publicly documented APIs.
+type: Index
+position: Consumer
+access: 3rd-Party
+image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+url: https://raw.githubusercontent.com/api-evangelist/brown/refs/heads/main/apis.yml
+tags:
+  - Education
+  - Higher Education
+  - University
+  - Research
+  - Library
+  - Digital Repository
+  - IIIF
+  - United States
+created: '2026-06-03'
+modified: '2026-06-03'
+specificationVersion: '0.19'
+apis:
+  - aid: brown:bdr-api
+    name: Brown Digital Repository (BDR) API
+    description: >-
+      Public REST/search API for the Brown Digital Repository, the library's
+      platform for gathering, indexing, storing, preserving, and making available
+      digital assets from scholarly, instructional, research, and administrative
+      activity at Brown. The search endpoint returns JSON and is publicly reachable.
+    humanURL: https://repository.library.brown.edu/studio/api-docs/
+    baseURL: https://repository.library.brown.edu/api/search/
+    tags: [ Digital Repository, Library, Search, Research Data, JSON ]
+    properties:
+      - type: Documentation
+        url: https://repository.library.brown.edu/studio/api-docs/
+      - type: GitHub
+        url: https://github.com/Brown-University-Library
+  - aid: brown:iiif
+    name: Brown Digital Repository IIIF Service
+    description: >-
+      IIIF (International Image Interoperability Framework) image and presentation
+      service exposing IIIF manifests for objects in the Brown Digital Repository.
+      Brown is listed as a IIIF repository case study by the IIIF community.
+    humanURL: https://iiif.io/guides/guides/repository.library.brown.edu/
+    baseURL: https://repository.library.brown.edu/iiif/
+    tags: [ IIIF, Images, Library, Digital Repository ]
+    properties:
+      - type: Documentation
+        url: https://iiif.io/guides/guides/repository.library.brown.edu/
+  - aid: brown:sso
+    name: Brown Shibboleth Single Sign-On (SAML)
+    description: >-
+      Brown's InCommon-federated Shibboleth identity provider implementing the
+      OASIS SAML 2.0 standard for web single sign-on across Brown web services.
+      Used for authentication/attribute release rather than as an open public API.
+    humanURL: https://ithelp.brown.edu/kb/shibboleth-single-sign-on
+    baseURL: https://sso.brown.edu/idp/shibboleth
+    tags: [ Authentication, SSO, SAML, Shibboleth, Identity ]
+    properties:
+      - type: Documentation
+        url: https://ithelp.brown.edu/kb/shibboleth-single-sign-on
+      - type: Authentication
+        url: https://sso.brown.edu/idp/shibboleth
+common:
+  - type: Website
+    url: https://www.brown.edu
+  - type: GitHub
+    url: https://github.com/Brown-University-Library
+  - type: LinkedIn
+    url: https://www.linkedin.com/school/brown-university/
+  - type: DeveloperPortal
+    url: https://repository.library.brown.edu/studio/api-docs/
+  - type: Authentication
+    url: https://sso.brown.edu/idp/shibboleth
+  - type: Plans
+    url: plans/brown-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/brown-rate-limits.yml
+  - type: FinOps
+    url: finops/brown-finops.yml
+  - type: Review
+    url: review.yml
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com
+---

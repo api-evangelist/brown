@@ -1,0 +1,47 @@
+---
+name: Brown University
+description: Brown University public developer/API footprint review for APIs.json cataloging.
+url: https://raw.githubusercontent.com/api-evangelist/brown/refs/heads/main/review.yml
+created: '2026-06-03'
+modified: '2026-06-03'
+reviews:
+  - date: '2026-06-03'
+    rating: 3
+    summary: >-
+      Verified live: the Brown Digital Repository (BDR) public search API
+      (/api/search/ returned 200), the BDR IIIF service (/iiif/ returned 200),
+      the BDR API docs page (200, though served behind a human-verification gate),
+      the Shibboleth/SAML SSO IdP, the official website, and the active
+      "Brown University Library" GitHub organization. The historical hackatbrown
+      student API (api.students.brown.edu) is now defunct (404) and was not
+      cataloged as a live API. No fabricated endpoints were included; SIS/course
+      systems are gated behind Brown authentication and not publicly documented.
+    endpoints:
+      - url: https://repository.library.brown.edu/api/search/
+        status: 200
+        note: BDR public search API, returns JSON; confirmed live.
+      - url: https://repository.library.brown.edu/studio/api-docs/
+        status: 200
+        note: BDR API documentation page; behind a bot/human-verification gate.
+      - url: https://repository.library.brown.edu/iiif/
+        status: 200
+        note: BDR IIIF image/presentation service; confirmed live.
+      - url: https://repository.library.brown.edu/
+        status: 200
+        note: Brown Digital Repository home.
+      - url: https://sso.brown.edu/idp/shibboleth
+        status: 200
+        note: Shibboleth/SAML 2.0 identity provider (InCommon federated).
+      - url: https://github.com/Brown-University-Library
+        status: 200
+        note: Active GitHub org, ~264 repositories incl. BDR API tools.
+      - url: https://www.brown.edu
+        status: 200
+        note: Official university website.
+      - url: https://api.students.brown.edu
+        status: 404
+        note: Historical hackatbrown student API backend; now defunct.
+      - url: https://www.re3data.org/repository/r3d100011654
+        status: 200
+        note: re3data registry entry for the Brown Digital Repository.
+---
