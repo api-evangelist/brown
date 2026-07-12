@@ -72,6 +72,8 @@ apis:
       - type: Authentication
         url: https://sso.brown.edu/idp/shibboleth
 common:
+  - type: DomainSecurity
+    url: security/brown-domain-security.yml
   - type: Website
     url: https://www.brown.edu
   - type: GitHub
