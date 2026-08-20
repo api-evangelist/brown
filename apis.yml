@@ -65,7 +65,16 @@ apis:
       Brown is listed as a IIIF repository case study by the IIIF community.
     humanURL: https://iiif.io/guides/guides/repository.library.brown.edu/
     baseURL: https://repository.library.brown.edu/iiif/
-    tags: [ IIIF, Images, Library, Digital Repository ]
+    tags:
+    - IIIF
+    - Image
+    - Library
+    - Digital Repository
+    tags_raw:
+    - IIIF
+    - Images
+    - Library
+    - Digital Repository
     properties:
       - type: Documentation
         url: https://iiif.io/guides/guides/repository.library.brown.edu/
