@@ -1,7 +1,15 @@
 {
   "repo": "brown",
-  "feeds": [],
+  "feeds": [
+    {
+      "source": "https://ithelp.brown.edu/",
+      "feed_url": "https://ithelp.brown.edu/",
+      "title": "",
+      "saved": 0,
+      "method": "none"
+    }
+  ],
   "post_count": 0,
-  "fetched": "2026-07-04T12:11:58Z",
+  "fetched": "2026-08-30T22:33:40Z",
   "note": "no blog feed"
 }
