@@ -292,6 +292,10 @@ apis:
   humanURL: https://events.brown.edu/
   baseURL: https://events.brown.edu/live/
   tags:
+  - Event
+  - Campus Life
+  - iCalendar
+  tags_raw:
   - Events
   - Campus Life
   - iCalendar
