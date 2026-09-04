@@ -64,7 +64,7 @@ accessModel:
   note: >-
     https://repository.library.brown.edu/api/search/?q=*&rows=1 returned 200 and a full result set
     with no credential of any kind. There is nothing to sign up for.
-position: Consumer
+position: Consuming
 access: 3rd-Party
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/brown.png
 url: https://raw.githubusercontent.com/api-evangelist/brown/refs/heads/main/apis.yml
