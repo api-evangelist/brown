@@ -2,34 +2,32 @@ aid: brown
 name: Brown University
 x-type: university
 x-category: Private Research University
-description: >-
-  Brown University is a private Ivy League research university in Providence, Rhode Island. Its
-  genuinely institution-operated programmable footprint is narrow, real, and concentrated entirely in
-  the Brown University Library. Three surfaces survive an operator check: the Brown Digital Repository
-  (BDR) REST API, the BDR's IIIF Image and Presentation services, and a Shibboleth SAML 2.0 identity
-  provider. All three sit under brown.edu, and the identity provider resolves into Brown's own ARIN
-  allocation (BROWN-UNIV, 128.148.252.0/24) behind a Brown-procured InCommon OV certificate, so the
-  attribution is settled by address ownership rather than by hostname.
+description: 'Brown University is a private Ivy League research university in Providence, Rhode Island.
+  Its genuinely institution-operated programmable footprint is narrow, real, and concentrated entirely
+  in the Brown University Library. Three surfaces survive an operator check: the Brown Digital Repository
+  (BDR) REST API, the BDR''s IIIF Image and Presentation services, and a Shibboleth SAML 2.0 identity
+  provider. All three sit under brown.edu, and the identity provider resolves into Brown''s own ARIN allocation
+  (BROWN-UNIV, 128.148.252.0/24) behind a Brown-procured InCommon OV certificate, so the attribution is
+  settled by address ownership rather than by hostname.
 
-  The BDR API is the substantive find: a public, keyless, Solr-backed API over 1,147,400 objects,
-  documented by Brown Library staff in the wiki of Brown's own GitHub repository, with 11,622 objects
-  exposing DataCite DOIs on Brown's prefix 10.26300. It is more than most universities in this cohort
-  operate. It is also unversioned, sends no CORS headers, returns nine-byte text/html bodies on
-  failure, silently caps results at 500 rows, and answers malformed queries with HTTP 200 and an
-  empty result set rather than the 400 its own documentation promises. There is no OAI-PMH endpoint
-  on any probed path — an absence worth stating, because reviewers assume an institutional repository
-  has one.
+  The BDR API is the substantive find: a public, keyless, Solr-backed API over 1,147,400 objects, documented
+  by Brown Library staff in the wiki of Brown''s own GitHub repository, with 11,622 objects exposing DataCite
+  DOIs on Brown''s prefix 10.26300. It is more than most universities in this cohort operate. It is also
+  unversioned, sends no CORS headers, returns nine-byte text/html bodies on failure, silently caps results
+  at 500 rows, and answers malformed queries with HTTP 200 and an empty result set rather than the 400
+  its own documentation promises. There is no OAI-PMH endpoint on any probed path — an absence worth stating,
+  because reviewers assume an institutional repository has one.
 
   Everything else that looks like a Brown API is a vendor platform running under a Brown hostname and
-  is recorded here as a tenant relationship, not as a Brown contract: library discovery is Ex Libris
-  Primo VE (bruknow.library.brown.edu terminates on Ex Libris (USA) Inc address space), the course
-  catalog and bulletin are Leepfrog CourseLeaf (cab.brown.edu and bulletin.brown.edu CNAME to
-  courseleaf.com), and the events calendar is LiveWhale (events.brown.edu CNAMEs to lwcal.com). Two of
-  those tenant platforms expose genuinely useful public JSON — Courses@Brown returns full section,
-  meeting-time and instructor data with no key, and Events@Brown serves a 3MB JSON feed and an iCal
-  feed — but that engineering is the vendor's. No central developer portal, no open data portal, and
-  no institution-operated course or registrar API exist; the one that did, the student-built
-  api.students.brown.edu, has been 404 since before this profile was first written.
+  is recorded here as a tenant relationship, not as a Brown contract: library discovery is Ex Libris Primo
+  VE (bruknow.library.brown.edu terminates on Ex Libris (USA) Inc address space), the course catalog and
+  bulletin are Leepfrog CourseLeaf (cab.brown.edu and bulletin.brown.edu CNAME to courseleaf.com), and
+  the events calendar is LiveWhale (events.brown.edu CNAMEs to lwcal.com). Two of those tenant platforms
+  expose genuinely useful public JSON — Courses@Brown returns full section, meeting-time and instructor
+  data with no key, and Events@Brown serves a 3MB JSON feed and an iCal feed — but that engineering is
+  the vendor''s. No central developer portal, no open data portal, and no institution-operated course
+  or registrar API exist; the one that did, the student-built api.students.brown.edu, has been 404 since
+  before this profile was first written.'
 type: Index
 deliveryModel:
   model: saas
@@ -43,11 +41,10 @@ deliveryModel:
   - https://github.com/Brown-University-Library
   generated: '2026-08-30'
   method: probed
-  note: >-
-    Corrected from the 2026-08-28 derived stamp, which read commercial:true, open_source:false and
-    callable_host:false. All three were wrong. The BDR API is callable without credentials, the
-    repository application is published as open source by the Brown University Library, and nothing
-    on this surface is sold.
+  note: Corrected from the 2026-08-28 derived stamp, which read commercial:true, open_source:false and
+    callable_host:false. All three were wrong. The BDR API is callable without credentials, the repository
+    application is published as open source by the Brown University Library, and nothing on this surface
+    is sold.
 accessModel:
   pricing: free
   onboarding: none
@@ -61,8 +58,7 @@ accessModel:
   - plans
   generated: '2026-08-30'
   method: probed
-  note: >-
-    https://repository.library.brown.edu/api/search/?q=*&rows=1 returned 200 and a full result set
+  note: https://repository.library.brown.edu/api/search/?q=*&rows=1 returned 200 and a full result set
     with no credential of any kind. There is nothing to sign up for.
 position: Consuming
 access: 3rd-Party
@@ -83,110 +79,19 @@ tags:
 - Course Catalog
 - Research Computing
 created: '2026-06-03'
-modified: '2026-08-30'
+modified: '2026-09-16'
 specificationVersion: '0.23'
 apis:
-- aid: brown:bdr-api
-  name: Brown Digital Repository (BDR) API
-  description: >-
-    The Brown University Library's public, keyless REST API over the Brown Digital Repository — an
-    item API, a collection API, a Solr-backed search API, and a two-key link index at /api/. Live and
-    unauthenticated on 2026-08-30 against an index of 1,147,400 public objects. Brown documents it
-    itself, in prose, in the wiki of its own Brown-University-Library/bdr_api_documentation GitHub
-    repository; there is no Brown-published OpenAPI, so the contract in this repo is derived and
-    marked as such. Notable behaviours, all probed: rows is silently clamped to 500, malformed
-    queries return 200 rather than the documented 400, unknown PIDs return a nine-byte text/html
-    "Not Found" rather than the documented 403, no CORS headers are sent (JSONP via a callback
-    parameter is the documented cross-origin path), and Cloudflare bot protection added in Spring
-    2025 fronts the host.
-  humanURL: https://github.com/Brown-University-Library/bdr_api_documentation/wiki
-  baseURL: https://repository.library.brown.edu/api/
-  tags:
-  - Digital Repository
-  - Research Repository
-  - Library
-  - Search
-  - Research Data
-  - JSON
-  properties:
-  - type: OpenAPI
-    url: openapi/brown-bdr-api-openapi.yml
-  - type: Documentation
-    url: https://github.com/Brown-University-Library/bdr_api_documentation/wiki
-  - type: APIReference
-    url: https://repository.library.brown.edu/studio/api-docs/
-  - type: JSONSchema
-    url: json-schema/brown-bdr-searchresponse.json
-  - type: Examples
-    url: examples/bdr-search-filtered.json
-  - type: Errors
-    url: errors/brown-bdr-errors.yml
-  - type: Vocabulary
-    url: vocabulary/brown-bdr-field-vocabulary.yml
-  - type: Rules
-    url: rules/brown-bdr-spectral-ruleset.yml
-  - type: Authentication
-    url: authentication/brown-authentication.yml
-  - type: Lifecycle
-    url: lifecycle/brown-lifecycle.yml
-  - type: Conformance
-    url: conformance/brown-conformance.yml
-  - type: GitHubOrganization
-    url: https://github.com/Brown-University-Library
-  x-operator: institution
-  x-operator-basis: >-
-    repository.library.brown.edu is under brown.edu, Brown's own registrable domain. The repository
-    application is Brown University Library software published as open source in Brown's own GitHub
-    organization (bdr_indexer, bdrxml, bdr_uploader_hub_project, bdr-api-tools), the API
-    documentation is authored by named Brown Library staff in Brown's own GitHub wiki, and DataCite
-    registers the repository as Brown's client BROWN.BDR with 14,089 DOIs under prefix 10.26300. No
-    vendor identity appears in the host, the responses or the docs. Cloudflare fronts the host as a
-    CDN and bot-protection layer, which is delivery, not operation.
-- aid: brown:bdr-iiif
-  name: Brown Digital Repository IIIF Image and Presentation API
-  description: >-
-    The BDR's IIIF surface, on the same institution-operated host. IIIF Image API 2.x (info.json
-    reports a 6335x8560 source with a seven-step size pyramid and 512x512 tiles for the probed
-    object) and IIIF Presentation API 2.x (sc:Manifest with a metadata block projected from the
-    object's MODS record). Both are version 2.x; IIIF Presentation 3.0 has been the recommendation
-    since 2020 and Brown has not migrated. The paths are not advertised anywhere and /iiif is
-    disallowed in the repository's robots.txt — the documented route in is the item API's
-    links.views.iiif_image_info and links.views.iiif_manifest keys. Brown is a IIIF community case
-    study.
-  humanURL: https://iiif.io/guides/guides/repository.library.brown.edu/
-  baseURL: https://repository.library.brown.edu/iiif/
-  tags:
-  - IIIF
-  - Image
-  - Library
-  - Digital Repository
-  properties:
-  - type: OpenAPI
-    url: openapi/brown-bdr-iiif-openapi.yml
-  - type: Documentation
-    url: https://iiif.io/guides/guides/repository.library.brown.edu/
-  - type: JSONSchema
-    url: json-schema/brown-bdr-imageinfo.json
-  - type: Examples
-    url: examples/bdr-iiif-presentation-manifest.json
-  - type: Conformance
-    url: conformance/brown-conformance.yml
-  x-operator: institution
-  x-operator-basis: >-
-    Same host and same Brown Library application as the BDR API. IIIF is a community specification,
-    not a vendor platform; implementing it does not transfer operation to anyone.
 - aid: brown:idp
   name: Brown University Identity Provider (Shibboleth / SAML 2.0)
-  description: >-
-    Brown's Shibboleth identity provider, and the strongest machine-readable contract in this
-    profile. Brown self-publishes signed per-entity SAML metadata at the entityID itself — uncommon;
-    most institutions leave that to the federation aggregate — and the same entity appears in
-    InCommon's signed MDQ service, flowing on into eduGAIN. Declares HTTP-POST, HTTP-Redirect,
-    POST-SimpleSign and Shibboleth AuthnRequest SSO bindings, a SOAP attribute authority, a
-    shibmd:Scope of brown.edu, and four entity categories including InCommon and REFEDS Research &
-    Scholarship and REFEDS Sirtfi, backed by a dedicated security contact. It is browser SSO: it
-    grants no API credentials, and there is no OAuth server, token endpoint or OIDC discovery
-    document anywhere on Brown's surface.
+  description: 'Brown''s Shibboleth identity provider, and the strongest machine-readable contract in
+    this profile. Brown self-publishes signed per-entity SAML metadata at the entityID itself — uncommon;
+    most institutions leave that to the federation aggregate — and the same entity appears in InCommon''s
+    signed MDQ service, flowing on into eduGAIN. Declares HTTP-POST, HTTP-Redirect, POST-SimpleSign and
+    Shibboleth AuthnRequest SSO bindings, a SOAP attribute authority, a shibmd:Scope of brown.edu, and
+    four entity categories including InCommon and REFEDS Research & Scholarship and REFEDS Sirtfi, backed
+    by a dedicated security contact. It is browser SSO: it grants no API credentials, and there is no
+    OAuth server, token endpoint or OIDC discovery document anywhere on Brown''s surface.'
   humanURL: https://ithelp.brown.edu/kb/shibboleth-single-sign-on
   baseURL: https://sso.brown.edu/idp/
   tags:
@@ -209,20 +114,17 @@ apis:
   - type: Conformance
     url: conformance/brown-conformance.yml
   x-operator: institution
-  x-operator-basis: >-
-    sso.brown.edu resolves to 128.148.252.212, netname BROWN-UNIV, OrgName "Brown University"
-    (BROWNU-Z, ARIN), with no CNAME onto any managed-IdP platform. The TLS certificate subject is
-    "C=US, ST=Rhode Island, O=Brown University, CN=sso.brown.edu", issued by InCommon RSA OV SSL
-    CA 3. Organization block, shibmd:Scope and all four metadata contacts are Brown's. This is the
-    check that reclassified Monash's and Melbourne's IdPs as tenant surfaces; Brown passes it.
+  x-operator-basis: sso.brown.edu resolves to 128.148.252.212, netname BROWN-UNIV, OrgName "Brown University"
+    (BROWNU-Z, ARIN), with no CNAME onto any managed-IdP platform. The TLS certificate subject is "C=US,
+    ST=Rhode Island, O=Brown University, CN=sso.brown.edu", issued by InCommon RSA OV SSL CA 3. Organization
+    block, shibmd:Scope and all four metadata contacts are Brown's. This is the check that reclassified
+    Monash's and Melbourne's IdPs as tenant surfaces; Brown passes it.
 - aid: brown:bruknow
   name: BruKnow Library Discovery (Ex Libris Primo VE tenant)
-  description: >-
-    Brown University Library's discovery layer. search.library.brown.edu redirects to
-    bruknow.library.brown.edu/discovery/search?vid=01BU_INST:BROWN, an Ex Libris Primo VE instance.
-    Brown's catalog data and Brown's institution view code; Ex Libris's platform, engineering and
-    APIs. Recorded as a tenant relationship because it is a real institutional fact — no Ex Libris
-    contract is saved under this slug.
+  description: Brown University Library's discovery layer. search.library.brown.edu redirects to bruknow.library.brown.edu/discovery/search?vid=01BU_INST:BROWN,
+    an Ex Libris Primo VE instance. Brown's catalog data and Brown's institution view code; Ex Libris's
+    platform, engineering and APIs. Recorded as a tenant relationship because it is a real institutional
+    fact — no Ex Libris contract is saved under this slug.
   humanURL: https://bruknow.library.brown.edu/discovery/search?vid=01BU_INST:BROWN
   baseURL: https://bruknow.library.brown.edu/discovery/
   tags:
@@ -233,22 +135,19 @@ apis:
   - type: LibraryCatalog
     url: https://bruknow.library.brown.edu/discovery/search?vid=01BU_INST:BROWN
   x-operator: tenant
-  x-operator-basis: >-
-    bruknow.library.brown.edu CNAMEs to brown.primo.exlibrisgroup.com and on to
-    na07.primo.exlibrisgroup.com, resolving to 216.147.212.109 — netname EXLIBRIS-20-1, OrgName
-    "Ex Libris (USA) Inc" (ELU-2, ARIN). Brown hostname, Ex Libris infrastructure and contract.
+  x-operator-basis: bruknow.library.brown.edu CNAMEs to brown.primo.exlibrisgroup.com and on to na07.primo.exlibrisgroup.com,
+    resolving to 216.147.212.109 — netname EXLIBRIS-20-1, OrgName "Ex Libris (USA) Inc" (ELU-2, ARIN).
+    Brown hostname, Ex Libris infrastructure and contract.
 - aid: brown:cab
   name: Courses@Brown (Leepfrog CourseLeaf tenant)
-  description: >-
-    Brown's course search and registration front end. It exposes a live, public, keyless JSON API at
-    cab.brown.edu/api/ — a POST interface with page=fose routes for search and details that returned
-    393 course sections with CRNs, meeting times, instructors, enrolment caps and grade-mode options
-    for a single keyword query on 2026-08-30. This is by some distance the richest machine-readable
-    Brown data on the public internet, and it is not Brown's engineering: the host is a CourseLeaf
-    tenant and the fose search interface is Leepfrog's product. Recorded as a tenant relationship;
-    no CourseLeaf contract is saved under this slug. Brown operates no course or registrar API of its
-    own — the student-built api.students.brown.edu that once did has been 404 since before this
-    profile was written.
+  description: 'Brown''s course search and registration front end. It exposes a live, public, keyless
+    JSON API at cab.brown.edu/api/ — a POST interface with page=fose routes for search and details that
+    returned 393 course sections with CRNs, meeting times, instructors, enrolment caps and grade-mode
+    options for a single keyword query on 2026-08-30. This is by some distance the richest machine-readable
+    Brown data on the public internet, and it is not Brown''s engineering: the host is a CourseLeaf tenant
+    and the fose search interface is Leepfrog''s product. Recorded as a tenant relationship; no CourseLeaf
+    contract is saved under this slug. Brown operates no course or registrar API of its own — the student-built
+    api.students.brown.edu that once did has been 404 since before this profile was written.'
   humanURL: https://cab.brown.edu/
   baseURL: https://cab.brown.edu/api/
   tags:
@@ -259,16 +158,14 @@ apis:
   - type: CourseCatalog
     url: https://cab.brown.edu/
   x-operator: tenant
-  x-operator-basis: >-
-    cab.brown.edu CNAMEs to brown-fs.courseleaf.com and on to brown-fs.courseleafaws.com, resolving
-    to 18.221.164.147 (Amazon Technologies Inc., AT-88-Z). CourseLeaf is Leepfrog Technologies'
-    product; the ?page=fose&route=search POST interface is theirs, deployed identically across their
-    customer base.
+  x-operator-basis: cab.brown.edu CNAMEs to brown-fs.courseleaf.com and on to brown-fs.courseleafaws.com,
+    resolving to 18.221.164.147 (Amazon Technologies Inc., AT-88-Z). CourseLeaf is Leepfrog Technologies'
+    product; the ?page=fose&route=search POST interface is theirs, deployed identically across their customer
+    base.
 - aid: brown:bulletin
   name: Brown University Bulletin (Leepfrog CourseLeaf CAT tenant)
-  description: >-
-    The university's academic catalog of programs, concentrations and requirements, on the same
-    vendor as Courses@Brown but a separate deployment. Human-readable; no public JSON interface was
+  description: The university's academic catalog of programs, concentrations and requirements, on the
+    same vendor as Courses@Brown but a separate deployment. Human-readable; no public JSON interface was
     found on it.
   humanURL: https://bulletin.brown.edu/
   baseURL: https://bulletin.brown.edu/
@@ -279,16 +176,14 @@ apis:
   - type: CourseCatalog
     url: https://bulletin.brown.edu/
   x-operator: tenant
-  x-operator-basis: >-
-    bulletin.brown.edu CNAMEs to brown-public.courseleaf.com, resolving to 12.175.6.47 (AT&T
-    Enterprises, LLC). CourseLeaf CAT, Leepfrog Technologies.
+  x-operator-basis: bulletin.brown.edu CNAMEs to brown-public.courseleaf.com, resolving to 12.175.6.47
+    (AT&T Enterprises, LLC). CourseLeaf CAT, Leepfrog Technologies.
 - aid: brown:events
   name: Events@Brown (LiveWhale Calendar tenant)
-  description: >-
-    Brown's university-wide events calendar, serving a public JSON feed at /live/json/events
-    (3,128,496 bytes on 2026-08-30) and an iCalendar feed at /live/ical/events (2,101,266 bytes,
-    RFC 5545, PRODID //Events@Brown//NONSGML v1.0//EN). Both keyless and live. The events are Brown's;
-    the feed format and the platform are White Whale Web Services' LiveWhale.
+  description: Brown's university-wide events calendar, serving a public JSON feed at /live/json/events
+    (3,128,496 bytes on 2026-08-30) and an iCalendar feed at /live/ical/events (2,101,266 bytes, RFC 5545,
+    PRODID //Events@Brown//NONSGML v1.0//EN). Both keyless and live. The events are Brown's; the feed
+    format and the platform are White Whale Web Services' LiveWhale.
   humanURL: https://events.brown.edu/
   baseURL: https://events.brown.edu/live/
   tags:
@@ -303,10 +198,236 @@ apis:
   - type: Documentation
     url: https://events.brown.edu/
   x-operator: tenant
-  x-operator-basis: >-
-    events.brown.edu CNAMEs to brown-prod.lwcal.com. LiveWhale Calendar, a hosted product; the
-    /live/json/ and /live/ical/ feed routes are LiveWhale's, deployed identically across its
-    customers.
+  x-operator-basis: events.brown.edu CNAMEs to brown-prod.lwcal.com. LiveWhale Calendar, a hosted product;
+    the /live/json/ and /live/ical/ feed routes are LiveWhale's, deployed identically across its customers.
+- aid: brown:brown-collections-api
+  name: Brown University Collections API
+  description: Repository collections and their membership.
+  humanURL: https://github.com/Brown-University-Library/bdr_api_documentation/wiki
+  baseURL: https://repository.library.brown.edu/api/
+  tags:
+  - Collections
+  properties:
+  - type: OpenAPI
+    url: openapi/brown-collections-api-openapi.yml
+  - type: Documentation
+    url: https://github.com/Brown-University-Library/bdr_api_documentation/wiki
+  - type: APIReference
+    url: https://repository.library.brown.edu/studio/api-docs/
+  - type: JSONSchema
+    url: json-schema/brown-bdr-searchresponse.json
+  - type: Examples
+    url: examples/bdr-search-filtered.json
+  - type: Errors
+    url: errors/brown-bdr-errors.yml
+  - type: Vocabulary
+    url: vocabulary/brown-bdr-field-vocabulary.yml
+  - type: Rules
+    url: rules/brown-bdr-spectral-ruleset.yml
+  - type: Authentication
+    url: authentication/brown-authentication.yml
+  - type: Lifecycle
+    url: lifecycle/brown-lifecycle.yml
+  - type: Conformance
+    url: conformance/brown-conformance.yml
+  - type: GitHubOrganization
+    url: https://github.com/Brown-University-Library
+  - type: Documentation
+    url: https://iiif.io/guides/guides/repository.library.brown.edu/
+  - type: JSONSchema
+    url: json-schema/brown-bdr-imageinfo.json
+  - type: Examples
+    url: examples/bdr-iiif-presentation-manifest.json
+- aid: brown:brown-discovery-api
+  name: Brown University Discovery API
+  description: The API root link index.
+  humanURL: https://github.com/Brown-University-Library/bdr_api_documentation/wiki
+  baseURL: https://repository.library.brown.edu/api/
+  tags:
+  - Discovery
+  properties:
+  - type: OpenAPI
+    url: openapi/brown-discovery-api-openapi.yml
+  - type: Documentation
+    url: https://github.com/Brown-University-Library/bdr_api_documentation/wiki
+  - type: APIReference
+    url: https://repository.library.brown.edu/studio/api-docs/
+  - type: JSONSchema
+    url: json-schema/brown-bdr-searchresponse.json
+  - type: Examples
+    url: examples/bdr-search-filtered.json
+  - type: Errors
+    url: errors/brown-bdr-errors.yml
+  - type: Vocabulary
+    url: vocabulary/brown-bdr-field-vocabulary.yml
+  - type: Rules
+    url: rules/brown-bdr-spectral-ruleset.yml
+  - type: Authentication
+    url: authentication/brown-authentication.yml
+  - type: Lifecycle
+    url: lifecycle/brown-lifecycle.yml
+  - type: Conformance
+    url: conformance/brown-conformance.yml
+  - type: GitHubOrganization
+    url: https://github.com/Brown-University-Library
+  - type: Documentation
+    url: https://iiif.io/guides/guides/repository.library.brown.edu/
+  - type: JSONSchema
+    url: json-schema/brown-bdr-imageinfo.json
+  - type: Examples
+    url: examples/bdr-iiif-presentation-manifest.json
+- aid: brown:brown-iiif-image-api
+  name: Brown University IIIF Image API
+  description: IIIF Image API 2.x — image information and derivative delivery.
+  humanURL: https://github.com/Brown-University-Library/bdr_api_documentation/wiki
+  baseURL: https://repository.library.brown.edu/api/
+  tags:
+  - IIIF Image
+  properties:
+  - type: OpenAPI
+    url: openapi/brown-iiif-image-api-openapi.yml
+  - type: Documentation
+    url: https://github.com/Brown-University-Library/bdr_api_documentation/wiki
+  - type: APIReference
+    url: https://repository.library.brown.edu/studio/api-docs/
+  - type: JSONSchema
+    url: json-schema/brown-bdr-searchresponse.json
+  - type: Examples
+    url: examples/bdr-search-filtered.json
+  - type: Errors
+    url: errors/brown-bdr-errors.yml
+  - type: Vocabulary
+    url: vocabulary/brown-bdr-field-vocabulary.yml
+  - type: Rules
+    url: rules/brown-bdr-spectral-ruleset.yml
+  - type: Authentication
+    url: authentication/brown-authentication.yml
+  - type: Lifecycle
+    url: lifecycle/brown-lifecycle.yml
+  - type: Conformance
+    url: conformance/brown-conformance.yml
+  - type: GitHubOrganization
+    url: https://github.com/Brown-University-Library
+  - type: Documentation
+    url: https://iiif.io/guides/guides/repository.library.brown.edu/
+  - type: JSONSchema
+    url: json-schema/brown-bdr-imageinfo.json
+  - type: Examples
+    url: examples/bdr-iiif-presentation-manifest.json
+- aid: brown:brown-iiif-presentation-api
+  name: Brown University IIIF Presentation API
+  description: IIIF Presentation API 2.x — manifests describing an object's structure and metadata.
+  humanURL: https://github.com/Brown-University-Library/bdr_api_documentation/wiki
+  baseURL: https://repository.library.brown.edu/api/
+  tags:
+  - IIIF Presentation
+  properties:
+  - type: OpenAPI
+    url: openapi/brown-iiif-presentation-api-openapi.yml
+  - type: Documentation
+    url: https://github.com/Brown-University-Library/bdr_api_documentation/wiki
+  - type: APIReference
+    url: https://repository.library.brown.edu/studio/api-docs/
+  - type: JSONSchema
+    url: json-schema/brown-bdr-searchresponse.json
+  - type: Examples
+    url: examples/bdr-search-filtered.json
+  - type: Errors
+    url: errors/brown-bdr-errors.yml
+  - type: Vocabulary
+    url: vocabulary/brown-bdr-field-vocabulary.yml
+  - type: Rules
+    url: rules/brown-bdr-spectral-ruleset.yml
+  - type: Authentication
+    url: authentication/brown-authentication.yml
+  - type: Lifecycle
+    url: lifecycle/brown-lifecycle.yml
+  - type: Conformance
+    url: conformance/brown-conformance.yml
+  - type: GitHubOrganization
+    url: https://github.com/Brown-University-Library
+  - type: Documentation
+    url: https://iiif.io/guides/guides/repository.library.brown.edu/
+  - type: JSONSchema
+    url: json-schema/brown-bdr-imageinfo.json
+  - type: Examples
+    url: examples/bdr-iiif-presentation-manifest.json
+- aid: brown:brown-items-api
+  name: Brown University Items API
+  description: Metadata for a single repository object, addressed by PID.
+  humanURL: https://github.com/Brown-University-Library/bdr_api_documentation/wiki
+  baseURL: https://repository.library.brown.edu/api/
+  tags:
+  - Items
+  properties:
+  - type: OpenAPI
+    url: openapi/brown-items-api-openapi.yml
+  - type: Documentation
+    url: https://github.com/Brown-University-Library/bdr_api_documentation/wiki
+  - type: APIReference
+    url: https://repository.library.brown.edu/studio/api-docs/
+  - type: JSONSchema
+    url: json-schema/brown-bdr-searchresponse.json
+  - type: Examples
+    url: examples/bdr-search-filtered.json
+  - type: Errors
+    url: errors/brown-bdr-errors.yml
+  - type: Vocabulary
+    url: vocabulary/brown-bdr-field-vocabulary.yml
+  - type: Rules
+    url: rules/brown-bdr-spectral-ruleset.yml
+  - type: Authentication
+    url: authentication/brown-authentication.yml
+  - type: Lifecycle
+    url: lifecycle/brown-lifecycle.yml
+  - type: Conformance
+    url: conformance/brown-conformance.yml
+  - type: GitHubOrganization
+    url: https://github.com/Brown-University-Library
+  - type: Documentation
+    url: https://iiif.io/guides/guides/repository.library.brown.edu/
+  - type: JSONSchema
+    url: json-schema/brown-bdr-imageinfo.json
+  - type: Examples
+    url: examples/bdr-iiif-presentation-manifest.json
+- aid: brown:brown-search-api
+  name: Brown University Search API
+  description: Solr-backed search across public BDR objects.
+  humanURL: https://github.com/Brown-University-Library/bdr_api_documentation/wiki
+  baseURL: https://repository.library.brown.edu/api/
+  tags:
+  - Search
+  properties:
+  - type: OpenAPI
+    url: openapi/brown-search-api-openapi.yml
+  - type: Documentation
+    url: https://github.com/Brown-University-Library/bdr_api_documentation/wiki
+  - type: APIReference
+    url: https://repository.library.brown.edu/studio/api-docs/
+  - type: JSONSchema
+    url: json-schema/brown-bdr-searchresponse.json
+  - type: Examples
+    url: examples/bdr-search-filtered.json
+  - type: Errors
+    url: errors/brown-bdr-errors.yml
+  - type: Vocabulary
+    url: vocabulary/brown-bdr-field-vocabulary.yml
+  - type: Rules
+    url: rules/brown-bdr-spectral-ruleset.yml
+  - type: Authentication
+    url: authentication/brown-authentication.yml
+  - type: Lifecycle
+    url: lifecycle/brown-lifecycle.yml
+  - type: Conformance
+    url: conformance/brown-conformance.yml
+  - type: GitHubOrganization
+    url: https://github.com/Brown-University-Library
+  - type: Documentation
+    url: https://iiif.io/guides/guides/repository.library.brown.edu/
+  - type: JSONSchema
+    url: json-schema/brown-bdr-imageinfo.json
+  - type: Examples
+    url: examples/bdr-iiif-presentation-manifest.json
 common:
 - type: Website
   url: https://www.brown.edu
@@ -343,9 +464,9 @@ common:
 - type: LinkedIn
   url: https://www.linkedin.com/school/brown-university/
 - type: OpenAPI
-  url: openapi/brown-bdr-api-openapi.yml
+  url: openapi/_original/brown-bdr-api-openapi.yml
 - type: OpenAPI
-  url: openapi/brown-bdr-iiif-openapi.yml
+  url: openapi/_original/brown-bdr-iiif-openapi.yml
 - type: JSONSchema
   url: json-schema/brown-bdr-searchresponse.json
 - type: Examples
@@ -379,61 +500,87 @@ common:
 x-coverage:
   state: covered
   reason: covered
-  detail: >-
-    Brown publishes a real, institution-operated, live, keyless API and this profile documents it
-    from probes rather than from links. Three institution surfaces were confirmed and attributed by
-    address ownership, not hostname: the BDR REST API and its IIIF services on
-    repository.library.brown.edu, and the Shibboleth IdP on sso.brown.edu, which resolves into
-    BROWN-UNIV (ARIN) behind a Brown-subject InCommon OV certificate. Brown publishes no OpenAPI, so
-    both contracts here are marked derived; every path, parameter and status code in them was
-    reconciled against Brown's own prose documentation and a live probe.
+  detail: 'Brown publishes a real, institution-operated, live, keyless API and this profile documents
+    it from probes rather than from links. Three institution surfaces were confirmed and attributed by
+    address ownership, not hostname: the BDR REST API and its IIIF services on repository.library.brown.edu,
+    and the Shibboleth IdP on sso.brown.edu, which resolves into BROWN-UNIV (ARIN) behind a Brown-subject
+    InCommon OV certificate. Brown publishes no OpenAPI, so both contracts here are marked derived; every
+    path, parameter and status code in them was reconciled against Brown''s own prose documentation and
+    a live probe.
 
-    Four tenant relationships are recorded and deliberately not credited as Brown engineering: Ex
-    Libris Primo VE (bruknow.library.brown.edu terminates on Ex Libris (USA) Inc address space),
-    Leepfrog CourseLeaf twice (cab.brown.edu and bulletin.brown.edu), and LiveWhale
-    (events.brown.edu). Two of them serve substantial public JSON — Courses@Brown returns full
-    section data keyless, Events@Brown a 3MB feed plus iCal — which is exactly the pattern this
-    pipeline exists to keep out of an institution's score.
+    Four tenant relationships are recorded and deliberately not credited as Brown engineering: Ex Libris
+    Primo VE (bruknow.library.brown.edu terminates on Ex Libris (USA) Inc address space), Leepfrog CourseLeaf
+    twice (cab.brown.edu and bulletin.brown.edu), and LiveWhale (events.brown.edu). Two of them serve
+    substantial public JSON — Courses@Brown returns full section data keyless, Events@Brown a 3MB feed
+    plus iCal — which is exactly the pattern this pipeline exists to keep out of an institution''s score.
 
-    Named absences, all probed rather than assumed: no OAI-PMH endpoint on seven candidate paths, no
-    ORCID identifiers in the repository index, no open data portal (data.brown.edu does not resolve),
-    no api.brown.edu, no developer.brown.edu, no llms.txt, no security.txt, no OAuth or OIDC of any
-    kind, and no institution-operated course or registrar API. Brown is a registered DataCite
-    consortium organization with an active repository client and 11,622 DOI-bearing objects in the
-    public index, which is the strongest domain-standard evidence in the profile alongside
-    SAML/Shibboleth.
+    Named absences, all probed rather than assumed: no OAI-PMH endpoint on seven candidate paths, no ORCID
+    identifiers in the repository index, no open data portal (data.brown.edu does not resolve), no api.brown.edu,
+    no developer.brown.edu, no llms.txt, no security.txt, no OAuth or OIDC of any kind, and no institution-operated
+    course or registrar API. Brown is a registered DataCite consortium organization with an active repository
+    client and 11,622 DOI-bearing objects in the public index, which is the strongest domain-standard
+    evidence in the profile alongside SAML/Shibboleth.
 
-    One partial block, recorded because it is about us, not about Brown: the human documentation
-    surface at repository.library.brown.edu/studio/ — including the /studio/api-docs/ page — serves a
-    Cloudflare Turnstile interstitial under HTTP 200 to non-browser clients. The JSON API endpoints
-    behind it are entirely open. That is the inverse of the usual pattern, and it means the
-    APIReference pointer in common[] reads live to a browser and is unreadable to an agent. Brown's
-    own GitHub wiki carries the same documentation without a challenge, and is used here as the
-    primary documentation pointer.
+    One partial block, recorded because it is about us, not about Brown: the human documentation surface
+    at repository.library.brown.edu/studio/ — including the /studio/api-docs/ page — serves a Cloudflare
+    Turnstile interstitial under HTTP 200 to non-browser clients. The JSON API endpoints behind it are
+    entirely open. That is the inverse of the usual pattern, and it means the APIReference pointer in
+    common[] reads live to a browser and is unreadable to an agent. Brown''s own GitHub wiki carries the
+    same documentation without a challenge, and is used here as the primary documentation pointer.'
   evidence:
-  - {url: 'https://repository.library.brown.edu/api/', status: 200}
-  - {url: 'https://repository.library.brown.edu/api/search/?q=*&rows=1', status: 200}
-  - {url: 'https://repository.library.brown.edu/api/items/bdr:80246/', status: 200}
-  - {url: 'https://repository.library.brown.edu/api/collections/', status: 200}
-  - {url: 'https://repository.library.brown.edu/iiif/image/bdr:80246/info.json', status: 200}
-  - {url: 'https://repository.library.brown.edu/iiif/presentation/bdr:80246/manifest.json', status: 200}
-  - {url: 'https://sso.brown.edu/idp/shibboleth', status: 200}
-  - {url: 'https://mdq.incommon.org/entities/https%3A%2F%2Fsso.brown.edu%2Fidp%2Fshibboleth', status: 200}
-  - {url: 'https://api.datacite.org/clients/brown.bdr', status: 200}
-  - {url: 'https://github.com/Brown-University-Library/bdr_api_documentation/wiki', status: 200}
-  - {url: 'https://repository.library.brown.edu/studio/api-docs/', status: 200, note: 'HTTP 200 serving a Cloudflare Turnstile interstitial to non-browser clients'}
-  - {url: 'https://repository.library.brown.edu/oai/?verb=Identify', status: 404}
-  - {url: 'https://repository.library.brown.edu/oai-pmh?verb=Identify', status: 404}
-  - {url: 'https://repository.library.brown.edu/api/oai?verb=Identify', status: 404}
-  - {url: 'https://repository.library.brown.edu/services/oai?verb=Identify', status: 404}
-  - {url: 'https://api.brown.edu/', status: 0, note: DNS does not resolve}
-  - {url: 'https://data.brown.edu/', status: 0, note: DNS does not resolve}
-  - {url: 'https://developer.brown.edu/', status: 0, note: DNS does not resolve}
-  - {url: 'https://www.brown.edu/.well-known/security.txt', status: 404}
-  - {url: 'https://www.brown.edu/llms.txt', status: 404}
-  - {url: 'https://cab.brown.edu/api/?page=fose&route=search', status: 200, note: 'tenant — CourseLeaf'}
-  - {url: 'https://events.brown.edu/live/json/events', status: 200, note: 'tenant — LiveWhale'}
-  - {url: 'https://bruknow.library.brown.edu/discovery/search?vid=01BU_INST:BROWN', status: 200, note: 'tenant — Ex Libris Primo VE'}
+  - url: https://repository.library.brown.edu/api/
+    status: 200
+  - url: https://repository.library.brown.edu/api/search/?q=*&rows=1
+    status: 200
+  - url: https://repository.library.brown.edu/api/items/bdr:80246/
+    status: 200
+  - url: https://repository.library.brown.edu/api/collections/
+    status: 200
+  - url: https://repository.library.brown.edu/iiif/image/bdr:80246/info.json
+    status: 200
+  - url: https://repository.library.brown.edu/iiif/presentation/bdr:80246/manifest.json
+    status: 200
+  - url: https://sso.brown.edu/idp/shibboleth
+    status: 200
+  - url: https://mdq.incommon.org/entities/https%3A%2F%2Fsso.brown.edu%2Fidp%2Fshibboleth
+    status: 200
+  - url: https://api.datacite.org/clients/brown.bdr
+    status: 200
+  - url: https://github.com/Brown-University-Library/bdr_api_documentation/wiki
+    status: 200
+  - url: https://repository.library.brown.edu/studio/api-docs/
+    status: 200
+    note: HTTP 200 serving a Cloudflare Turnstile interstitial to non-browser clients
+  - url: https://repository.library.brown.edu/oai/?verb=Identify
+    status: 404
+  - url: https://repository.library.brown.edu/oai-pmh?verb=Identify
+    status: 404
+  - url: https://repository.library.brown.edu/api/oai?verb=Identify
+    status: 404
+  - url: https://repository.library.brown.edu/services/oai?verb=Identify
+    status: 404
+  - url: https://api.brown.edu/
+    status: 0
+    note: DNS does not resolve
+  - url: https://data.brown.edu/
+    status: 0
+    note: DNS does not resolve
+  - url: https://developer.brown.edu/
+    status: 0
+    note: DNS does not resolve
+  - url: https://www.brown.edu/.well-known/security.txt
+    status: 404
+  - url: https://www.brown.edu/llms.txt
+    status: 404
+  - url: https://cab.brown.edu/api/?page=fose&route=search
+    status: 200
+    note: tenant — CourseLeaf
+  - url: https://events.brown.edu/live/json/events
+    status: 200
+    note: tenant — LiveWhale
+  - url: https://bruknow.library.brown.edu/discovery/search?vid=01BU_INST:BROWN
+    status: 200
+    note: tenant — Ex Libris Primo VE
   probed: '2026-08-30'
 maintainers:
 - FN: Kin Lane
