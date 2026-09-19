@@ -98,6 +98,12 @@ apis:
   - Identity Federation
   - SAML
   - Shibboleth
+  - SSO
+  - Authentication
+  tags_raw:
+  - Identity Federation
+  - SAML
+  - Shibboleth
   - Single Sign-On
   - Authentication
   properties:
@@ -206,6 +212,8 @@ apis:
   humanURL: https://github.com/Brown-University-Library/bdr_api_documentation/wiki
   baseURL: https://repository.library.brown.edu/api/
   tags:
+  - Collection
+  tags_raw:
   - Collections
   properties:
   - type: OpenAPI
@@ -358,6 +366,8 @@ apis:
   humanURL: https://github.com/Brown-University-Library/bdr_api_documentation/wiki
   baseURL: https://repository.library.brown.edu/api/
   tags:
+  - Item
+  tags_raw:
   - Items
   properties:
   - type: OpenAPI
