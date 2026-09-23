@@ -1,0 +1,58 @@
+{
+  "example": "BDR search API \u2014 title query with field list",
+  "provider": "Brown University",
+  "providerId": "brown",
+  "generated": "2026-08-30",
+  "method": "searched",
+  "source": "https://repository.library.brown.edu/api/search/?q=primary_title:irish&rows=2&fl=pid,primary_title,abstract",
+  "x-operator": "institution",
+  "request": {
+    "method": "GET",
+    "url": "https://repository.library.brown.edu/api/search/?q=primary_title:irish&rows=2&fl=pid,primary_title,abstract",
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "responseHeader": {
+        "status": 0,
+        "QTime": 92,
+        "params": {
+          "q": "primary_title:irish",
+          "fl": "pid,primary_title,abstract",
+          "rows": "2",
+          "wt": "json"
+        }
+      },
+      "response": {
+        "numFound": 481,
+        "start": 0,
+        "docs": [
+          {
+            "pid": "bdr:250403",
+            "abstract": [
+              "One of a collection of 31 original gouache paintings of uniform figures signed Hudson or Cedric. Figure in black with rifle facing left."
+            ],
+            "primary_title": "London Irish"
+          },
+          {
+            "pid": "bdr:250404",
+            "abstract": [
+              "One of a collection of 31 original gouache paintings of uniform figures signed Hudson or Cedric. Figure in black with sword."
+            ],
+            "primary_title": "London Irish"
+          }
+        ]
+      },
+      "links": {
+        "login": "https://repository.library.brown.edu/api/login/?next=/api/search/%3Fq%3Dprimary_title%3Airish%26rows%3D2%26fl%3Dpid%2Cprimary_title%2Cabstract"
+      }
+    }
+  },
+  "note": "Verbatim live response. Solr-shaped: responseHeader.params echoes the query, response carries numFound/start/docs. The links.login key is present on every response and points at the affiliation-gated view of the same query.",
+  "method_note": "Response body is Brown's, captured verbatim from a live probe on 2026-08-30; the surrounding request/response wrapper is API Evangelist's.",
+  "probed": "2026-08-30"
+}

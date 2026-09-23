@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/brown/refs/heads/main/json-schema/brown-bdr-collection.json",
+  "title": "Collection",
+  "x-provenance": {
+    "generated": "2026-08-30",
+    "method": "derived",
+    "source": "Derived from openapi/brown-bdr-api-openapi.yml and openapi/brown-bdr-iiif-openapi.yml, which were themselves derived from Brown's own API documentation wiki plus live probes on 2026-08-30. Brown publishes no JSON Schema. Not a Brown-authored artifact.",
+    "x-operator": "institution"
+  },
+  "type": "object",
+  "description": "A single collection, its sub-collections and its member items.",
+  "additionalProperties": true,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "items": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "https://raw.githubusercontent.com/api-evangelist/brown/refs/heads/main/json-schema/brown-bdr-collectionref.json"
+      }
+    }
+  }
+}

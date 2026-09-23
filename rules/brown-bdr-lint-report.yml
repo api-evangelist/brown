@@ -1,0 +1,54 @@
+specification: API Evangelist Lint Report
+specificationVersion: '0.1'
+provider: Brown University
+providerId: brown
+generated: '2026-08-30'
+method: generated
+source: >-
+  spectral lint openapi/brown-bdr-api-openapi.yml openapi/brown-bdr-iiif-openapi.yml
+  --ruleset rules/brown-bdr-spectral-ruleset.yml, run with @stoplight/spectral-cli 6.16.3 on
+  2026-08-30.
+x-operator: institution
+description: >-
+  The ruleset was actually run against both contracts, and this is the result. Recorded because a
+  ruleset that has never been executed is a claim, not a control.
+result:
+  tool: '@stoplight/spectral-cli 6.16.3'
+  documents_linted: 2
+  errors: 0
+  warnings: 5
+  infos: 0
+  hints: 0
+findings:
+- code: path-keys-no-trailing-slash
+  severity: warning
+  count: 5
+  paths:
+  - /api/
+  - /api/search/
+  - /api/items/{pid}/
+  - /api/collections/
+  - /api/collections/{collection_id}/
+  disposition: accepted
+  rationale: >-
+    Spectral's built-in style rule, and the contract is right and the rule is wrong here. Brown's
+    endpoints genuinely require the trailing slash — it is a Django URL convention and the paths are
+    documented that way in Brown's own wiki. Stripping the slash to satisfy a style rule would make
+    the contract describe endpoints that do not exist. Recorded as an accepted deviation rather than
+    silenced in the ruleset, so the next reviewer sees the decision instead of a clean report.
+custom_rules_passing:
+- bdr-operator-declared
+- bdr-operator-basis-stated
+- bdr-provenance-stamped
+- bdr-server-is-brown-owned
+- bdr-no-vendor-identity
+- bdr-pagination-cap-documented
+- bdr-error-responses-declared
+- bdr-operation-has-description
+- bdr-parameter-has-description
+- bdr-observed-divergence-flagged
+note: >-
+  bdr-no-vendor-identity and bdr-server-is-brown-owned are the two that matter for this cohort. Both
+  pass, which is the mechanical statement of the operator finding: nothing in either contract names
+  Figshare, Elsevier Pure, Ex Libris, Symplectic, Dataverse, CourseLeaf or Primo, and every server
+  URL is under brown.edu.

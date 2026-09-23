@@ -1,0 +1,247 @@
+openapi: 3.2.0
+info:
+  title: Brown Digital Repository (BDR) Items API
+  version: '2026-08-30'
+  summary: Public, keyless read API over the Brown University Library's digital repository.
+  description: 'The Brown Digital Repository (BDR) is the Brown University Library''s platform for gathering,
+
+    indexing, storing, preserving and making available digital assets produced by scholarly,
+
+    instructional, research and administrative activity at Brown.'
+  contact:
+    name: Brown University Library
+    url: https://library.brown.edu
+  termsOfService: https://policy.brown.edu/policy/privacy
+  license:
+    name: Rights vary per repository object; see each object's MODS metadata
+    url: https://repository.library.brown.edu/studio/
+  x-operator: institution
+  x-operator-basis: Host is under brown.edu, Brown's own registrable domain. The repository application is authored and maintained by the Brown University Library (public source in https://github.com/Brown-University-Library — bdr_indexer, bdrxml, bdr_uploader_hub_project, bdr-api-tools), the API documentation is written by Brown Library staff in Brown's own GitHub wiki, and DataCite lists the repository as Brown's registered client BROWN.BDR. No vendor platform identity appears in servers[], info.title or info.contact.
+  x-provenance:
+    generated: '2026-08-30'
+    method: derived
+    source:
+    - https://github.com/Brown-University-Library/bdr_api_documentation/wiki
+    - https://repository.library.brown.edu/api/
+    - https://repository.library.brown.edu/api/search/?q=primary_title:irish&rows=2&fl=pid,primary_title,abstract
+    - https://repository.library.brown.edu/api/items/bdr:80246/
+    - https://repository.library.brown.edu/api/collections/
+    - https://api.datacite.org/clients/brown.bdr
+    note: Derived from Brown's own prose documentation plus live probing on 2026-08-30. Not published by Brown as a specification. Do not present this document as a Brown-authored contract.
+servers:
+- url: https://repository.library.brown.edu
+  description: Brown Digital Repository production
+security: []
+tags:
+- name: Items
+  description: Metadata for a single repository object, addressed by PID.
+paths:
+  /api/items/{pid}/:
+    get:
+      tags:
+      - Items
+      operationId: getItem
+      summary: Get one repository object
+      description: 'Returns the full metadata record for a single object. The response is link-rich: `api_links` dereferences to collection and search API calls, `links.views.iiif_image_info` and `links.views.iiif_manifest` point at the IIIF surface, and `links.content_datastreams` and `links.descriptive_datastreams` point at the object''s binary and MODS XML.'
+      parameters:
+      - name: pid
+        in: path
+        required: true
+        description: Persistent identifier, e.g. `bdr:80246`. Both numeric and Noid-style suffixes occur.
+        schema:
+          type: string
+          pattern: ^bdr:[A-Za-z0-9]+$
+        example: bdr:80246
+      responses:
+        '200':
+          description: Object metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '403':
+          description: Forbidden. Documented by Brown for an item that is not found OR is a private object.
+          content:
+            text/html:
+              schema:
+                type: string
+        '404':
+          description: Not Found. OBSERVED behaviour for an unknown PID — `bdr:0000000` returned 404 with the nine-byte `text/html` body `Not Found`, not the documented 403 and not JSON. A client parsing every response as JSON will throw here.
+          content:
+            text/html:
+              schema:
+                type: string
+              example: Not Found
+        '500':
+          description: Internal server error, per Brown's documented exception behaviour.
+components:
+  schemas:
+    ItemLinks:
+      type: object
+      properties:
+        thumbnail:
+          type: string
+          format: uri
+        descriptive_datastreams:
+          type: object
+          description: Descriptive metadata datastreams. `MODS` is the descriptive standard the BDR serves, as XML.
+          additionalProperties:
+            type: string
+            format: uri
+        content_datastreams:
+          type: object
+          description: Binary content datastreams, e.g. `highres`, `lowres`.
+          additionalProperties:
+            type: string
+            format: uri
+        views:
+          type: object
+          description: Viewer and IIIF endpoints, including `iiif_image_info` and `iiif_manifest`. These are the documented route from the item API into the IIIF surface; the IIIF paths are not otherwise discoverable, and `/iiif` is disallowed in the repository's robots.txt.
+          additionalProperties:
+            type: string
+            format: uri
+    Item:
+      type: object
+      description: A full object record from the item API.
+      additionalProperties: true
+      required:
+      - pid
+      properties:
+        pid:
+          type: string
+        object_type:
+          type: string
+        primary_title:
+          type: string
+        uri:
+          type: string
+          format: uri
+          description: Human web view of the object.
+        json_uri:
+          type: string
+          format: uri
+          description: Self link — this item API call.
+        brief:
+          type: object
+          description: Display-oriented summary block; every value is an array of strings.
+          additionalProperties: true
+        relations:
+          $ref: '#/components/schemas/Relations'
+        api_links:
+          type: object
+          description: Dereferenceable API URLs for this object's collections and keywords.
+          additionalProperties: true
+        links:
+          $ref: '#/components/schemas/ItemLinks'
+        views_dict:
+          type: object
+          description: Named viewer and IIIF URLs. Duplicates `links.views`.
+          additionalProperties:
+            type: string
+            format: uri
+        datastreams:
+          type: object
+          description: Per-datastream mimeType, size, SHA-512 checksum and lastModified.
+          additionalProperties: true
+    CollectionRef:
+      type: object
+      properties:
+        pid:
+          type: string
+        id:
+          type: string
+        db_id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        json_uri:
+          type: string
+          format: uri
+          description: Collection API URL for this collection.
+        uri:
+          type: string
+          format: uri
+          description: Human web view of this collection.
+        thumbnail_url:
+          type: string
+          format: uri
+    Relations:
+      type: object
+      description: Fixed set of relation predicates, each an array. Empty arrays are returned rather than omitted, so a client can rely on every key being present.
+      properties:
+        hasAnnotation:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        hasDerivation:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        hasDescription:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        hasTranscript:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        hasTranslation:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        hasPart:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        isDerivationOf:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        isVersionOf:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        isTranscriptOf:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        isTranslationOf:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        isMemberOf:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        isPartOf:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        isMemberOfCollection:
+          type: array
+          items:
+            $ref: '#/components/schemas/CollectionRef'
+x-access:
+  authentication: none
+  description: Every documented BDR API endpoint is anonymous and keyless. There is no API key, no OAuth flow and no registration step. The boundary is not authentication but VISIBILITY — the index exposes `_display_public_bsi`, `_display_brown_bsi` and `_display_private_bsi`, and the anonymous API sees only public objects. Brown-affiliated access to the wider set goes through the Shibboleth login the `links.login` key on every search response points at.
+x-throttling:
+  observed_headers: none
+  description: 'No rate-limit headers were returned on any probe. Brown documents in its own API wiki that Cloudflare bot protection was added in Spring 2025 and may affect API users requesting a large volume of items at a high rate, and advises Brown community members to use the VPN to reduce the impact. The repository''s robots.txt sets `Crawl-delay: 30`. The 500-row response cap is the only hard, observable limit.'

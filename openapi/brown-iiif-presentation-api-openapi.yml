@@ -1,0 +1,91 @@
+openapi: 3.2.0
+info:
+  title: Brown Digital Repository IIIF Image and Presentation IIIF…
+  version: '2026-08-30'
+  summary: Brown University Library's IIIF Image API 2.x and Presentation API 2.x surface over the BDR.
+  description: 'The Brown Digital Repository serves its images through the International Image Interoperability
+
+    Framework.'
+  contact:
+    name: Brown University Library
+    url: https://library.brown.edu
+  x-operator: institution
+  x-operator-basis: Same host and same application as the BDR API — `repository.library.brown.edu`, under Brown's own registrable domain, running Brown University Library software. IIIF is a community specification, not a vendor platform; serving it does not make the surface someone else's.
+  x-provenance:
+    generated: '2026-08-30'
+    method: derived
+    source:
+    - https://repository.library.brown.edu/api/items/bdr:80246/
+    - https://repository.library.brown.edu/iiif/image/bdr:80246/info.json
+    - https://repository.library.brown.edu/iiif/presentation/bdr:80246/manifest.json
+    - https://iiif.io/guides/guides/repository.library.brown.edu/
+    note: Derived from live probes on 2026-08-30 plus the IIIF community's own case-study guide for repository.library.brown.edu. Not published by Brown as a specification.
+servers:
+- url: https://repository.library.brown.edu
+  description: Brown Digital Repository production
+security: []
+tags:
+- name: IIIF Presentation
+  description: IIIF Presentation API 2.x — manifests describing an object's structure and metadata.
+paths:
+  /iiif/presentation/{pid}/manifest.json:
+    get:
+      tags:
+      - IIIF Presentation
+      operationId: getIiifManifest
+      summary: IIIF Presentation API 2.x manifest
+      description: Returns a `sc:Manifest` for a repository object. The `metadata` array is projected from the object's MODS record — the probed manifest for `bdr:80246` carried `Full_Title`, `Subtitle` and further descriptive labels drawn straight from MODS.
+      parameters:
+      - name: pid
+        in: path
+        required: true
+        description: BDR persistent identifier for the object the manifest describes.
+        schema:
+          type: string
+          pattern: ^bdr:[A-Za-z0-9]+$
+        example: bdr:80246
+      responses:
+        '200':
+          description: IIIF Presentation manifest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Manifest'
+        '404':
+          description: Not Found. Observed for objects with no IIIF derivative.
+components:
+  schemas:
+    Manifest:
+      type: object
+      description: IIIF Presentation API 2.x manifest, as observed.
+      additionalProperties: true
+      properties:
+        '@context':
+          type: string
+          const: http://iiif.io/api/presentation/2/context.json
+        '@id':
+          type: string
+          format: uri
+        '@type':
+          type: string
+          const: sc:Manifest
+        label:
+          type: string
+        metadata:
+          type: array
+          description: Label/value pairs projected from the object's MODS record.
+          items:
+            type: object
+            properties:
+              label:
+                type: string
+              value:
+                type: string
+        sequences:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+x-access:
+  authentication: none
+  description: Anonymous and keyless for public objects, matching the BDR API.

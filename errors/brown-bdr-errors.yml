@@ -1,0 +1,155 @@
+specification: API Evangelist Errors
+specificationVersion: '0.1'
+provider: Brown University
+providerId: brown
+surface: Brown Digital Repository (BDR) API
+x-operator: institution
+generated: '2026-08-30'
+method: derived
+probed: '2026-08-30'
+method_note: >-
+  Authored by API Evangelist from live probes on 2026-08-30, not published by Brown. `derived` is the
+  authorship class the catalog's provenance manifest reads; the probe evidence itself is in `source`
+  and in the per-finding `evidence` blocks below.
+source:
+- https://github.com/Brown-University-Library/bdr_api_documentation/wiki
+- https://repository.library.brown.edu/api/items/bdr:0000000/
+- https://repository.library.brown.edu/api/collections/999999999/
+- https://repository.library.brown.edu/api/search/?q=%5B
+- https://repository.library.brown.edu/api/search/?q=%28%28
+- https://repository.library.brown.edu/api/search/?q=*&rows=99999
+description: >-
+  Error semantics for the BDR API, stated three ways: what Brown documents, what the service actually
+  did when probed on 2026-08-30, and whether the two agree. Brown's documentation is unusually
+  explicit for a university API — it names 400, 403 and 500 conditions in prose — which makes the
+  divergences worth recording precisely rather than glossing.
+
+  The headline for an integrator: the BDR does not return machine-readable errors. There is no
+  problem+json, no error object, no error code. Failures arrive as short `text/html` bodies, and the
+  most common failure mode is not an error at all but a silent success with wrong data.
+error_format:
+  media_type: text/html
+  structured: false
+  problem_json: false
+  description: >-
+    No RFC 9457 problem details, no JSON error envelope, no error code vocabulary. A 404 is the
+    nine-byte body `Not Found`. A client that assumes `response.json()` succeeds on every BDR
+    response will throw on the first missing PID.
+errors:
+- status: 200
+  condition: Malformed Solr query
+  documented: false
+  observed: true
+  evidence:
+    url: https://repository.library.brown.edu/api/search/?q=%5B
+    status: 200
+    body_shape: '{"responseHeader":{"status":0,...},"response":{"numFound":0,"start":0,"docs":[]}}'
+  note: >-
+    THE most dangerous behaviour on this surface, and it contradicts the documentation. Brown
+    documents that "if the query is badly formatted, a '400 / Bad Request' response will be
+    returned." No probe reproduced that. An unbalanced bracket, an unbalanced parenthesis and an
+    unbalanced quote each returned 200 with Solr `status: 0`. Two returned zero results; the
+    unbalanced quote returned 481 results, silently reinterpreting the query. A caller cannot
+    distinguish "no matches" from "your query was wrong" from any field in the response.
+- status: 200
+  condition: rows exceeding the undocumented 500 cap
+  documented: false
+  observed: true
+  evidence:
+    url: https://repository.library.brown.edu/api/search/?q=*&rows=99999
+    status: 200
+    echoed_rows: '500'
+  note: >-
+    Requests for 501, 1000 and 99999 rows all returned 500 documents with `responseHeader.params.rows`
+    echoed as "500". The echo is the only signal that the request was modified. A harvester that
+    pages by incrementing `rows` will silently truncate; page with `start` instead.
+- status: 200
+  condition: Non-numeric or negative pagination values
+  documented: false
+  observed: true
+  evidence:
+    url: https://repository.library.brown.edu/api/search/?q=*&start=-1
+    status: 200
+    echoed_start: '0'
+  note: >-
+    `rows=notanumber` silently falls back to 10; `start=-1` is silently clamped to 0. Both are
+    visible only in the echoed params.
+- status: 400
+  condition: Badly formatted query
+  documented: true
+  observed: false
+  evidence:
+    source: https://github.com/Brown-University-Library/bdr_api_documentation/wiki/Search-API-examples
+  note: Documented by Brown. Not reproduced by any probe on 2026-08-30. Recorded as documented-but-unobserved.
+- status: 403
+  condition: Item not found, or item is a private object
+  documented: true
+  observed: false
+  evidence:
+    source: https://github.com/Brown-University-Library/bdr_api_documentation/wiki/Item-API-examples
+  note: >-
+    Brown documents 403 for both the missing and the private case — deliberately conflating them so
+    the API does not confirm the existence of restricted objects, which is the right design. The
+    probe returned 404 for a missing PID instead, so either the behaviour changed or 403 is reserved
+    for the genuinely-private case. Not tested against a known private PID, because probing for one
+    would be probing an access boundary.
+- status: 404
+  condition: Unknown PID or unknown collection id
+  documented: false
+  observed: true
+  evidence:
+  - url: https://repository.library.brown.edu/api/items/bdr:0000000/
+    status: 404
+    content_type: text/html; charset=utf-8
+    body: Not Found
+  - url: https://repository.library.brown.edu/api/collections/999999999/
+    status: 404
+    content_type: text/html; charset=utf-8
+    body: Not Found
+  note: Nine-byte HTML body. Not JSON. Not the documented 403.
+- status: 404
+  condition: Object exists but has no IIIF derivative
+  documented: false
+  observed: true
+  evidence:
+    url: https://repository.library.brown.edu/iiif/image/bdr:1002496/info.json
+    status: 404
+  note: >-
+    `bdr:1002496` is a video object that returns 200 from the item API and 404 from the IIIF image
+    surface. Presence in the repository does not imply presence on IIIF; follow the item API's
+    `links.views.iiif_image_info` key rather than constructing IIIF URLs.
+- status: 500
+  condition: Any exception during request processing
+  documented: true
+  observed: false
+  evidence:
+    source: https://github.com/Brown-University-Library/bdr_api_documentation/wiki
+  note: >-
+    Brown documents this globally — "In the case of an exception during the request processing, a
+    '500 / Internal Server Error' response will be returned to the client." Not triggered by any
+    probe, which is the desirable outcome.
+- status: 403
+  condition: Cloudflare bot challenge
+  documented: true
+  observed: true
+  evidence:
+    url: https://repository.library.brown.edu/studio/api-docs/
+    status: 200
+    body_shape: Cloudflare Turnstile interstitial ("Verifying you're human", cf-turnstile sitekey)
+  note: >-
+    Brown documents in its own wiki that Cloudflare bot protection was added in Spring 2025, that it
+    may affect API users making high-volume requests, and that Brown affiliates can reduce the impact
+    by connecting over VPN. Observed on the human documentation page, which serves a Turnstile
+    interstitial under HTTP 200 — a soft challenge, not an error status. The JSON API endpoints
+    themselves were not challenged at probe volume.
+absent:
+- retry_after_header
+- rate_limit_headers
+- error_code_vocabulary
+- problem_json
+- cors_headers
+notes: >-
+  No `Access-Control-Allow-Origin` was returned on any endpoint. Brown's answer to that is JSONP —
+  the documented `callback` parameter, confirmed working, which switches the response to
+  `application/javascript`. That is a 2010-era browser story, and it is the only cross-origin path
+  the API offers.

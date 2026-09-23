@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/brown/refs/heads/main/json-schema/brown-bdr-imageinfo.json",
+  "title": "ImageInfo",
+  "x-provenance": {
+    "generated": "2026-08-30",
+    "method": "derived",
+    "source": "Derived from openapi/brown-bdr-api-openapi.yml and openapi/brown-bdr-iiif-openapi.yml, which were themselves derived from Brown's own API documentation wiki plus live probes on 2026-08-30. Brown publishes no JSON Schema. Not a Brown-authored artifact.",
+    "x-operator": "institution"
+  },
+  "type": "object",
+  "description": "IIIF Image API 2.x information document, as observed.",
+  "additionalProperties": true,
+  "properties": {
+    "@context": {
+      "type": "string",
+      "const": "http://iiif.io/api/image/2/context.json"
+    },
+    "@id": {
+      "type": "string",
+      "format": "uri"
+    },
+    "protocol": {
+      "type": "string",
+      "const": "http://iiif.io/api/image"
+    },
+    "width": {
+      "type": "integer"
+    },
+    "height": {
+      "type": "integer"
+    },
+    "sizes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "width": {
+            "type": "integer"
+          },
+          "height": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "tiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "width": {
+            "type": "integer"
+          },
+          "height": {
+            "type": "integer"
+          },
+          "scaleFactors": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    }
+  }
+}

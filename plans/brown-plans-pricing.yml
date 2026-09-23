@@ -4,30 +4,49 @@ schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main
 provider: Brown University
 providerId: brown
 created: '2026-06-03'
-modified: '2026-06-03'
-reconciled: false
+modified: '2026-08-30'
+generated: '2026-08-30'
+method: derived
+probed: '2026-08-30'
+method_note: >-
+  Authored by API Evangelist from live probes on 2026-08-30, not published by Brown. `derived` is the
+  authorship class the catalog's provenance manifest reads; the probe evidence itself is in `source`
+  and in the per-finding `evidence` blocks below.
+x-operator: institution
+reconciled: true
 tags:
 - Education
 - Higher Education
 - University
 - Plans
 description: >-
-  Brown University is a non-commercial higher-education institution; its APIs are not sold
-  as a commercial product. Public APIs (library, repository, course, and open-metadata
-  interfaces) are offered free of charge, typically for non-commercial use. Most
-  administrative and identity APIs are not openly self-service and require institutional
-  affiliation, credentials, or federation membership rather than a paid plan.
+  Brown University is a non-commercial higher-education institution and sells no API. There is no
+  pricing page, no plan table, no quota tier and nothing to sign up for. Corrected on 2026-08-30: the
+  2026-06-03 version described "library, repository, course, and open-metadata interfaces" as Brown's
+  free public APIs. Only the repository interface is Brown's. Course data reaches the public through
+  a Leepfrog CourseLeaf tenant and library discovery through an Ex Libris Primo VE tenant; both are
+  free to the caller and neither is Brown's engineering, so neither belongs in Brown's plan
+  inventory. There is no open-metadata interface at all — no OAI-PMH endpoint exists.
 notes: >-
-  No published per-seat or per-call commercial pricing. "Free / Open" reflects open
-  public endpoints; "Affiliation / Credentialed" reflects access gated by institutional
-  identity rather than payment.
+  "Free / Open" is the whole commercial story for Brown's institution-operated surface, and it is
+  literal: https://repository.library.brown.edu/api/search/?q=*&rows=1 returned HTTP 200 with a full
+  result set and no credential on 2026-08-30. "Affiliation / Credentialed" describes the Brown-only
+  view behind Shibboleth that every search response advertises through its links.login key; that is
+  browser SSO, gated by institutional identity rather than by payment, and it issues no API
+  credential.
 sources:
 - https://raw.githubusercontent.com/api-evangelist/brown/refs/heads/main/apis.yml
+- https://repository.library.brown.edu/api/search/?q=*&rows=1
+- https://repository.library.brown.edu/api/login/
 plans:
 - id: brown-free-open
   name: Free / Open
   type: free
-  description: Public open APIs (metadata, library, repository, course data) offered at no charge, generally for non-commercial use.
+  description: >-
+    The Brown Digital Repository REST API and its IIIF Image and Presentation services — Brown's only
+    institution-operated public APIs. Keyless, unregistered, free. Rights on the OBJECTS the API
+    returns vary per item and are carried in each object's MODS access-condition fields; the API
+    itself carries no terms of its own.
   entries:
   - label: Open API Access
     name: open_api_access
@@ -42,7 +61,11 @@ plans:
 - id: brown-affiliation
   name: Affiliation / Credentialed
   type: free
-  description: Administrative and identity APIs gated behind institutional SSO, client certificates, or federation membership rather than payment.
+  description: >-
+    The Brown-affiliate view of the repository, reached through the Shibboleth SSO that every search
+    response points at, plus the SAML federation membership itself. Gated by institutional identity,
+    not by payment, and not usable by software — there is no token endpoint, no OAuth server and no
+    service account.
   entries:
   - label: Credentialed Access
     name: credentialed_access

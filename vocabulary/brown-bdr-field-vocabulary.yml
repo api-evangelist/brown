@@ -1,0 +1,145 @@
+specification: API Evangelist Vocabulary
+specificationVersion: '0.1'
+provider: Brown University
+providerId: brown
+surface: Brown Digital Repository (BDR) search and item API
+x-operator: institution
+generated: '2026-08-30'
+method: derived
+source:
+- https://repository.library.brown.edu/api/search/?q=*&rows=200&fl=*
+- https://repository.library.brown.edu/api/items/bdr:80246/
+- https://github.com/Brown-University-Library/bdr_api_documentation/wiki/Search-API-examples
+description: >-
+  The BDR search API is a Solr interface, and Brown publishes no field dictionary for it. Without one
+  a caller cannot write a `fl=` list or a field-scoped query without guessing, which matters because
+  `fl=*` is the default and returns 50+ fields per document. This vocabulary was derived by sampling
+  200 documents from the live index with `fl=*` (130 distinct field names observed) and then counting
+  index-wide coverage for the load-bearing fields with `q=<field>:*&rows=0`. Counts are live values
+  from 2026-08-30 against an index of 1,147,400 public objects. Nothing here is asserted from a
+  naming convention alone — every field listed was observed in a real response, and every count was
+  read off a real query.
+naming_conventions:
+  note: >-
+    Field suffixes are Solr dynamic-field types, not Brown semantics. They tell a caller the
+    cardinality and the analysis, which is what governs whether a field can be sorted, faceted or
+    phrase-matched.
+  suffixes:
+  - suffix: _ssi
+    meaning: string, single-valued, indexed — exact match and sort
+  - suffix: _ssim
+    meaning: string, multi-valued, indexed — exact match and facet; values arrive as arrays
+  - suffix: _tsi / _tsim
+    meaning: text, analyzed, single- or multi-valued — tokenized full-text match
+  - suffix: _dsi
+    meaning: date, single-valued, indexed — ISO 8601 with millisecond precision
+  - suffix: _lsi
+    meaning: long integer, single-valued, indexed
+  - suffix: _bsi
+    meaning: boolean, single-valued, indexed
+  prefixes:
+  - prefix: mods_
+    count_in_sample: 41
+    meaning: >-
+      Projected from the object's MODS XML descriptive record, which the item API also serves raw at
+      links.descriptive_datastreams.MODS. MODS is the descriptive standard underneath the whole index.
+  - prefix: dwc_
+    count_in_sample: 34
+    meaning: >-
+      Darwin Core — biodiversity occurrence metadata. An unadvertised second descriptive scheme in
+      the BDR: 66,623 objects carry dwc_taxon_id_ssi. Not mentioned anywhere in Brown's API prose.
+  - prefix: rel_
+    meaning: RELS-EXT/RELS-INT object relationships — membership, content models, object type.
+  - prefix: ir_
+    meaning: Institutional-repository collection context.
+  - prefix: _display_
+    meaning: Visibility flags. These are the access boundary, not an auth scheme.
+fields:
+- name: pid
+  type: string
+  coverage: 1147400
+  description: Persistent identifier, `bdr:` prefixed. The primary key for the item and IIIF APIs.
+- name: primary_title
+  type: string
+  coverage: 1147400
+  description: Display title. `title_si` is the sortable variant; `primary_title_txt_en_split` the analyzed one.
+- name: object_type
+  type: string
+  coverage: 1147400
+  description: Object class — image, video, pdf, and so on. `rel_object_type_ssi` carries the same value.
+- name: resource_type_ssi
+  type: string
+  coverage: 1147400
+  description: MODS typeOfResource, normalized.
+- name: _display_public_bsi
+  type: boolean
+  coverage: 1147400
+  description: >-
+    Public-visibility flag. Present on every indexed object. With `_display_brown_bsi` and
+    `_display_private_bsi` this triple is the BDR's real access-control axis — the anonymous API
+    returns only what is publicly displayable, and the affiliation-gated view behind the
+    `links.login` URL returns more.
+- name: _display_brown_bsi
+  type: boolean
+  coverage: 1147400
+  description: Visible to authenticated Brown affiliates.
+- name: _display_private_bsi
+  type: boolean
+  coverage: 1147400
+  description: Restricted.
+- name: rel_is_member_of_collection_ssim
+  type: string[]
+  coverage: 1147066
+  description: >-
+    Collection membership by PID. The documented way to enumerate a collection from the search API,
+    e.g. `q=rel_is_member_of_collection_ssim:"bdr:wum3gm43"`.
+- name: mods_language_code_ssim
+  type: string[]
+  coverage: 983451
+  description: ISO 639 language code from MODS. `mods_language_text_ssim` is the label form.
+- name: mods_genre_aat_ssim
+  type: string[]
+  coverage: 123135
+  description: Getty Art & Architecture Thesaurus genre term. A controlled external vocabulary, unadvertised in Brown's docs.
+- name: dwc_taxon_id_ssi
+  type: string
+  coverage: 66623
+  description: Darwin Core taxon identifier. Evidence of a substantial natural-history collection inside the BDR.
+- name: mods_subject_fast_ssim
+  type: string[]
+  coverage: 52649
+  description: FAST (Faceted Application of Subject Terminology) subject heading, derived from LCSH.
+- name: mods_id_doi_ssi
+  type: string
+  coverage: 11622
+  description: >-
+    DOI for the object. THE load-bearing field for domain-standard conformance: 11,622 public objects
+    carry one, on prefix 10.26300 (Brown's own DataCite client BROWN.BDR) and legacy prefix 10.7301.
+    Note the suffix — `mods_id_doi_ssi`, single-valued. The plural `mods_id_doi_ssim` also exists and
+    matches only 2 objects, so a caller who guesses the multi-valued form gets a near-empty result
+    set and concludes the repository mints no DOIs. It does.
+- name: mods_related_id_doi_ssim
+  type: string[]
+  coverage: 148
+  description: DOIs of related works.
+- name: object_last_modified_dsi
+  type: date
+  coverage: 1147400
+  description: Last modification timestamp. The only field usable as a change cursor — there is no OAI-PMH endpoint and no feed.
+- name: datastreams_ssi
+  type: string
+  coverage: 1147400
+  description: >-
+    JSON-encoded STRING, not an object — per-datastream mimeType, size, SHA-512 checksum and
+    lastModified, serialized into a single Solr string field. A client must parse it twice.
+caveats:
+- >-
+  The field set is Solr-dynamic and varies by object type. 130 distinct fields appeared across a
+  200-document sample; the true index-wide field count is larger and is not published.
+- >-
+  Coverage counts were taken on 2026-08-30 and will drift. They are recorded to show relative
+  weight, not as a durable figure.
+- >-
+  `ir_collection_id` appears on 194 of 200 sampled documents but matches 0 on a `field:*` query,
+  which means it is stored-but-not-indexed. It can be requested through `fl=` and cannot be
+  queried on. Several fields behave this way; test before relying on one as a filter.

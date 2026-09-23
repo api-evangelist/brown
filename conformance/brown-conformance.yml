@@ -1,0 +1,290 @@
+specification: API Evangelist Domain Standard Conformance
+specificationVersion: '0.1'
+provider: Brown University
+providerId: brown
+regime: education
+generated: '2026-08-30'
+method: derived
+probed: '2026-08-30'
+method_note: >-
+  Authored by API Evangelist from live probes on 2026-08-30, not published by Brown. `derived` is the
+  authorship class the catalog's provenance manifest reads; the probe evidence itself is in `source`
+  and in the per-finding `evidence` blocks below.
+source:
+- https://sso.brown.edu/idp/shibboleth
+- https://mdq.incommon.org/entities/https%3A%2F%2Fsso.brown.edu%2Fidp%2Fshibboleth
+- https://api.datacite.org/clients/brown.bdr
+- https://api.datacite.org/providers/brownu
+- https://repository.library.brown.edu/api/search/?q=mods_id_doi_ssi:*&rows=0
+- https://repository.library.brown.edu/api/items/bdr:80246/
+- https://repository.library.brown.edu/iiif/image/bdr:80246/info.json
+- https://repository.library.brown.edu/iiif/presentation/bdr:80246/manifest.json
+description: >-
+  Conformance against the Kin Score `education` regime standards list — scim, lti, oneroster, ed-fi,
+  caliper, qti, oai-pmh, shibboleth, saml, orcid, datacite, crossref. Reward-only: a standard is
+  recorded as conformant only where an INSTITUTION-OPERATED contract demonstrates it, with evidence
+  naming the exact location. Standards reachable only through a vendor platform running under a
+  Brown hostname are listed separately as tenant-operated, because that conformance belongs to the
+  platform's engineering, not to Brown's.
+
+  Four of the twelve are evidenced, all four on surfaces Brown genuinely runs: SAML and Shibboleth
+  through a self-published, InCommon-signed identity provider on Brown's own address space, and
+  DataCite twice over — as a registered DataCite repository client and as 11,622 DOIs actually
+  present in the public search index. Eight are absent, and one of those absences is worth naming:
+  there is no OAI-PMH endpoint. That is the standard most reviewers assume an institutional
+  repository must have, and every plausible path was probed and returned 404.
+conforms:
+- standard: saml
+  name: SAML 2.0
+  status: conformant
+  x-operator: institution
+  confidence: high
+  evidence:
+    url: https://sso.brown.edu/idp/shibboleth
+    status: 200
+    content_type: application/xml;charset=UTF-8
+    locations:
+    - 'EntityDescriptor[@entityID="https://sso.brown.edu/idp/shibboleth"]'
+    - 'IDPSSODescriptor[@protocolSupportEnumeration ~ "urn:oasis:names:tc:SAML:2.0:protocol"]'
+    - 'SingleSignOnService[@Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"]'
+    - 'SingleSignOnService[@Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"]'
+    - 'AttributeAuthorityDescriptor/AttributeService[@Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"]'
+    archived: identity-federation/brown-idp-saml-metadata.xml
+    corroboration:
+      resolved_ip: 128.148.252.212
+      ip_owner: BROWN-UNIV / BROWNU-Z — Brown University (ARIN)
+      tls_subject: C=US, ST=Rhode Island, O=Brown University, CN=sso.brown.edu
+      tls_issuer: C=US, O=InCommon, LLC, CN=InCommon RSA OV SSL CA 3
+  note: >-
+    Confidence is high rather than moderate because Brown self-publishes per-entity metadata at the
+    entityID itself — the document dereferences to real signed-adjacent XML, not to a login page —
+    AND the same entity appears in InCommon's signed aggregate. Both descriptors, SAML 1.1 and SAML
+    2.0 protocol support, and a full attribute authority are declared.
+- standard: shibboleth
+  name: Shibboleth
+  status: conformant
+  x-operator: institution
+  confidence: high
+  evidence:
+    url: https://sso.brown.edu/idp/shibboleth
+    status: 200
+    locations:
+    - 'Extensions/shibmd:Scope[@regexp="false"] = brown.edu'
+    - 'IDPSSODescriptor/@protocolSupportEnumeration contains urn:mace:shibboleth:1.0'
+    - 'SingleSignOnService[@Binding="urn:mace:shibboleth:1.0:profiles:AuthnRequest"]'
+    - 'ArtifactResolutionService[@Binding="urn:oasis:names:tc:SAML:1.0:bindings:SOAP-binding"]'
+    archived: identity-federation/brown-idp-saml-metadata.xml
+  note: >-
+    A Shibboleth IdP proper, not a generic SAML implementation — the Shibboleth-specific
+    urn:mace:shibboleth profile, scope extension and artifact resolution service are all declared.
+    Brown documents it for end users at https://ithelp.brown.edu/kb/shibboleth-single-sign-on.
+- standard: datacite
+  name: DataCite
+  status: conformant
+  x-operator: institution
+  confidence: high
+  evidence:
+  - url: https://api.datacite.org/clients/brown.bdr
+    status: 200
+    locations:
+    - 'data.attributes.symbol = BROWN.BDR'
+    - 'data.attributes.name = Brown Digital Repository'
+    - 'data.attributes.url = https://repository.library.brown.edu/studio/'
+    note: Brown's own registered DataCite repository client, pointing at the institution-operated BDR.
+  - url: https://api.datacite.org/providers/brownu
+    status: 200
+    locations:
+    - 'data.attributes.symbol = BROWNU'
+    - 'data.attributes.name = Brown University'
+    - 'data.attributes.memberType = consortium_organization'
+    - 'data.attributes.isActive = true'
+  - url: https://api.datacite.org/dois?client-id=brown.bdr
+    status: 200
+    locations:
+    - 'meta.total = 14089'
+    note: 14,089 DOIs registered by the BDR client under prefix 10.26300.
+  - url: https://repository.library.brown.edu/api/search/?q=mods_id_doi_ssi:*&rows=0
+    status: 200
+    locations:
+    - 'response.numFound = 11622'
+    - 'field mods_id_doi_ssi, e.g. bdr:6mc8gzwe -> 10.26300/09d2-qv62'
+    note: >-
+      The decisive evidence, because it is IN BROWN'S OWN CONTRACT rather than in DataCite's registry:
+      11,622 objects in the public BDR search index expose a DOI on the queryable field
+      mods_id_doi_ssi, on prefix 10.26300 (Brown's DataCite client) and legacy prefix 10.7301.
+  note: >-
+    Evidenced on both sides — Brown is a registered DataCite consortium organization with an active
+    repository client, and its institution-operated API actually returns the DOIs. Naming trap worth
+    recording: the queryable field is the SINGULAR mods_id_doi_ssi. The plural mods_id_doi_ssim also
+    exists and matches only 2 objects, so a reviewer who guesses the multi-valued form concludes the
+    repository mints no DOIs and marks this absent.
+- standard: crossref
+  name: Crossref
+  status: partial
+  x-operator: institution
+  confidence: low
+  evidence:
+    url: https://repository.library.brown.edu/api/search/?q=mods_related_id_doi_ssim:*&rows=0
+    status: 200
+    locations:
+    - 'response.numFound = 148'
+  note: >-
+    Recorded as partial, not conformant, and deliberately weak. 148 objects carry related-work DOIs,
+    a share of which resolve through Crossref because they cite published literature. Brown is not a
+    Crossref member, mints nothing through Crossref, and exposes no Crossref-specific interface.
+    Referencing DOIs that Crossref happens to administer is not conformance, and it should not be
+    scored as if it were.
+not_conformant:
+- standard: oai-pmh
+  status: absent
+  probed: true
+  evidence:
+  - {url: 'https://repository.library.brown.edu/oai/?verb=Identify', status: 404}
+  - {url: 'https://repository.library.brown.edu/oai', status: 404}
+  - {url: 'https://repository.library.brown.edu/oai2?verb=Identify', status: 404}
+  - {url: 'https://repository.library.brown.edu/oai-pmh?verb=Identify', status: 404}
+  - {url: 'https://repository.library.brown.edu/api/oai?verb=Identify', status: 404}
+  - {url: 'https://repository.library.brown.edu/services/oai?verb=Identify', status: 404}
+  - {url: 'https://oai.library.brown.edu/?verb=Identify', status: 0, note: DNS does not resolve}
+  note: >-
+    The most consequential absence in this profile and the one most likely to be assumed present.
+    Seven candidate paths were probed with ?verb=Identify; none responded. The BDR is a large
+    institutional repository with no harvesting endpoint, which means aggregators cannot ingest it by
+    the standard route and the only change cursor available is sorting the search API on
+    object_last_modified_dsi. This repo's own rate-limits artifact previously referenced OAI-PMH
+    hypothetically; that reference has been corrected.
+- standard: orcid
+  status: absent
+  probed: true
+  evidence:
+  - {url: 'https://repository.library.brown.edu/api/search/?q=mods_id_orcid_ssim:*&rows=0', status: 200, result: 'numFound 0'}
+  - {url: 'https://repository.library.brown.edu/api/search/?q=mods_name_orcid_ssim:*&rows=0', status: 200, result: 'numFound 0'}
+  note: >-
+    No ORCID identifier field appeared in a 200-document field sample and no ORCID-named field
+    matches anything index-wide. Contributors are carried as name strings and MODS roles only, so
+    the repository's authors are not disambiguated to persistent researcher identifiers.
+- standard: scim
+  status: absent
+  probed: true
+  note: >-
+    No SCIM endpoint. Brown's identity surface is SAML browser SSO with a SOAP attribute authority;
+    there is no provisioning API, and no /scim/v2 path on any probed host.
+- standard: lti
+  status: absent
+  probed: false
+  note: >-
+    Brown runs Canvas for teaching and learning, which is LTI-capable — but Canvas is Instructure's
+    platform, so any LTI conformance there is Instructure's engineering, not Brown's. No
+    Brown-operated LTI tool provider or platform was found. Not credited.
+- standard: oneroster
+  status: absent
+  probed: false
+  note: OneRoster is a K-12 rostering standard. Not applicable to a research university, and not found.
+- standard: ed-fi
+  status: absent
+  probed: false
+  note: Ed-Fi is a K-12 state-reporting data standard. Not applicable, and not found.
+- standard: caliper
+  status: absent
+  probed: false
+  note: No Caliper learning-analytics sensor or event store exposed on any Brown-operated host.
+- standard: qti
+  status: absent
+  probed: false
+  note: No QTI assessment interchange surface found.
+adjacent_standards_evidenced:
+  note: >-
+    Standards outside the `education` regime list that the institution-operated surfaces genuinely
+    implement. Recorded because they are real conformance and are the substance of what Brown's
+    contracts actually do, not to be scored against the regime.
+  standards:
+  - standard: iiif-image-api
+    version: '2.x'
+    status: conformant
+    x-operator: institution
+    evidence:
+      url: https://repository.library.brown.edu/iiif/image/bdr:80246/info.json
+      status: 200
+      locations:
+      - '@context = http://iiif.io/api/image/2/context.json'
+      - 'protocol = http://iiif.io/api/image'
+      - 'tiles[0] = {width: 512, height: 512}'
+  - standard: iiif-presentation-api
+    version: '2.x'
+    status: conformant
+    x-operator: institution
+    evidence:
+      url: https://repository.library.brown.edu/iiif/presentation/bdr:80246/manifest.json
+      status: 200
+      locations:
+      - '@context = http://iiif.io/api/presentation/2/context.json'
+      - '@type = sc:Manifest'
+      corroboration: https://iiif.io/guides/guides/repository.library.brown.edu/ (IIIF community case study, HTTP 200)
+    note: >-
+      Both IIIF surfaces implement version 2.x. IIIF Presentation 3.0 has been the recommendation
+      since 2020; Brown has not migrated.
+  - standard: mods
+    status: conformant
+    x-operator: institution
+    evidence:
+      url: https://repository.library.brown.edu/storage/bdr:80246/MODS/
+      status: 200
+      content_type: text/xml
+    note: >-
+      MODS is the descriptive backbone of the whole index — 41 of the 130 sampled search fields are
+      mods_-prefixed, and the raw XML is served per object.
+  - standard: darwin-core
+    status: conformant
+    x-operator: institution
+    evidence:
+      url: https://repository.library.brown.edu/api/search/?q=dwc_taxon_id_ssi:*&rows=0
+      status: 200
+      locations:
+      - 'response.numFound = 66623'
+    note: >-
+      34 dwc_-prefixed fields and 66,623 objects with a Darwin Core taxon identifier. An entire
+      biodiversity metadata scheme inside the BDR that appears nowhere in Brown's API documentation.
+  - standard: fast-subject-headings
+    status: conformant
+    x-operator: institution
+    evidence:
+      url: https://repository.library.brown.edu/api/search/?q=mods_subject_fast_ssim:*&rows=0
+      status: 200
+      locations: ['response.numFound = 52649']
+  - standard: getty-aat
+    status: conformant
+    x-operator: institution
+    evidence:
+      url: https://repository.library.brown.edu/api/search/?q=mods_genre_aat_ssim:*&rows=0
+      status: 200
+      locations: ['response.numFound = 123135']
+tenant_operated:
+  note: >-
+    Standards implemented under a Brown hostname by a vendor platform. Listed for completeness and
+    NOT credited to Brown. Each is a real institutional relationship recorded in apis.yml with
+    x-operator: tenant.
+  entries:
+  - platform: Ex Libris Primo VE
+    host: bruknow.library.brown.edu
+    basis: CNAME to brown.primo.exlibrisgroup.com; 216.147.212.109 is EXLIBRIS-20-1, Ex Libris (USA) Inc (ARIN)
+    standards_the_platform_implements: [Alma/Primo APIs, SRU, OpenURL]
+  - platform: Leepfrog CourseLeaf
+    hosts: [cab.brown.edu, bulletin.brown.edu]
+    basis: CNAMEs to brown-fs.courseleaf.com and brown-public.courseleaf.com
+    standards_the_platform_implements: []
+  - platform: LiveWhale Calendar
+    host: events.brown.edu
+    basis: CNAME to brown-prod.lwcal.com
+    standards_the_platform_implements: [iCalendar (RFC 5545)]
+summary:
+  regime_standards_total: 12
+  conformant: 2
+  conformant_list: [saml, shibboleth]
+  conformant_with_datacite: 3
+  partial: 1
+  partial_list: [crossref]
+  absent: 8
+  note: >-
+    saml, shibboleth and datacite are evidenced as institution-operated. crossref is partial and
+    deliberately weak. The remaining eight — scim, lti, oneroster, ed-fi, caliper, qti, oai-pmh,
+    orcid — are absent, and oai-pmh and orcid were actively probed rather than assumed.

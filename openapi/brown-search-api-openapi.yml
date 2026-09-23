@@ -1,0 +1,208 @@
+openapi: 3.2.0
+info:
+  title: Brown Digital Repository (BDR) Search API
+  version: '2026-08-30'
+  summary: Public, keyless read API over the Brown University Library's digital repository.
+  description: 'The Brown Digital Repository (BDR) is the Brown University Library''s platform for gathering,
+
+    indexing, storing, preserving and making available digital assets produced by scholarly,
+
+    instructional, research and administrative activity at Brown.'
+  contact:
+    name: Brown University Library
+    url: https://library.brown.edu
+  termsOfService: https://policy.brown.edu/policy/privacy
+  license:
+    name: Rights vary per repository object; see each object's MODS metadata
+    url: https://repository.library.brown.edu/studio/
+  x-operator: institution
+  x-operator-basis: Host is under brown.edu, Brown's own registrable domain. The repository application is authored and maintained by the Brown University Library (public source in https://github.com/Brown-University-Library — bdr_indexer, bdrxml, bdr_uploader_hub_project, bdr-api-tools), the API documentation is written by Brown Library staff in Brown's own GitHub wiki, and DataCite lists the repository as Brown's registered client BROWN.BDR. No vendor platform identity appears in servers[], info.title or info.contact.
+  x-provenance:
+    generated: '2026-08-30'
+    method: derived
+    source:
+    - https://github.com/Brown-University-Library/bdr_api_documentation/wiki
+    - https://repository.library.brown.edu/api/
+    - https://repository.library.brown.edu/api/search/?q=primary_title:irish&rows=2&fl=pid,primary_title,abstract
+    - https://repository.library.brown.edu/api/items/bdr:80246/
+    - https://repository.library.brown.edu/api/collections/
+    - https://api.datacite.org/clients/brown.bdr
+    note: Derived from Brown's own prose documentation plus live probing on 2026-08-30. Not published by Brown as a specification. Do not present this document as a Brown-authored contract.
+servers:
+- url: https://repository.library.brown.edu
+  description: Brown Digital Repository production
+security: []
+tags:
+- name: Search
+  description: Solr-backed search across public BDR objects.
+paths:
+  /api/search/:
+    get:
+      tags:
+      - Search
+      operationId: searchRepository
+      summary: Search public BDR objects
+      description: 'Solr query interface over the public repository index (1,147,400 objects at probe time on
+
+        2026-08-30). Brown documents that queries follow standard Solr syntax, that a badly formatted
+
+        query returns 400, and that a successful search returns 200 even with zero results.
+
+
+        OBSERVED DIVERGENCE: malformed queries did not return 400 on any probe. `q=[`, `q=((` and an
+
+        unbalanced quote each returned 200 with `responseHeader.status: 0` and an empty or sanitized
+
+        result set. Treat 400 as documented-but-unobserved.
+
+
+        OBSERVED, UNDOCUMENTED: `rows` is silently clamped to 500 — `rows=501`, `rows=1000` and
+
+        `rows=99999` all echoed `rows: "500"` and returned 500 documents. A non-numeric `rows` falls
+
+        back to 10 and `start=-1` is clamped to 0, both silently. Paginate with `start` rather than
+
+        raising `rows`.'
+      parameters:
+      - name: q
+        in: query
+        required: true
+        description: Solr query string. A subset of Solr query syntax is supported.
+        schema:
+          type: string
+        examples:
+          allObjects:
+            summary: Everything in the public index
+            value: '*'
+          titlePhrase:
+            summary: Title keyword
+            value: primary_title:irish
+          collectionMembership:
+            summary: Members of one collection
+            value: rel_is_member_of_collection_ssim:"bdr:wum3gm43"
+          negation:
+            summary: In a collection but not part of another object
+            value: rel_is_member_of_collection_ssim:"bdr:wum3gm43" -rel_is_part_of_ssim:*
+      - name: fl
+        in: query
+        required: false
+        description: Comma-separated Solr field list. Defaults to `*`, which returns 50+ fields per document; narrowing it is the single biggest response-size lever. See vocabulary/brown-bdr-field-vocabulary.yml.
+        schema:
+          type: string
+          default: '*'
+        example: pid,primary_title,abstract
+      - name: rows
+        in: query
+        required: false
+        description: Documents to return. Defaults to 10. Silently clamped to a maximum of 500 (observed).
+        schema:
+          type: integer
+          default: 10
+          minimum: 0
+          maximum: 500
+      - name: start
+        in: query
+        required: false
+        description: Zero-based offset for pagination. Negative values are silently clamped to 0 (observed).
+        schema:
+          type: integer
+          default: 0
+          minimum: 0
+      - name: callback
+        in: query
+        required: false
+        description: 'JSONP callback name. Documented by Brown as accepted on all BDR APIs, and confirmed: supplying it changes the response Content-Type to `application/javascript` and wraps the JSON body in the named function call. JSONP exists here because the API sends no CORS headers — no `Access-Control-Allow-Origin` was returned on any probe, so a browser client on another origin cannot use `fetch` against it.'
+        schema:
+          type: string
+        example: myCb
+      responses:
+        '200':
+          description: Search result. Returned for successful searches, for searches with zero results, and (observed) for malformed queries.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+            application/javascript:
+              schema:
+                type: string
+                description: JSONP wrapper, returned when `callback` is supplied — the JSON body wrapped in the named function call.
+        '400':
+          description: Bad request. Documented by Brown for a badly formatted query; not reproduced by any probe on 2026-08-30.
+          content:
+            text/html:
+              schema:
+                type: string
+        '500':
+          description: Internal server error. Documented by Brown as the response to any exception during request processing.
+          content:
+            text/html:
+              schema:
+                type: string
+components:
+  schemas:
+    SearchResponse:
+      type: object
+      required:
+      - responseHeader
+      - response
+      properties:
+        responseHeader:
+          type: object
+          description: Solr response header. `params` echoes the query AFTER the service applied its own defaults and clamps, which is how the 500-row cap becomes visible.
+          properties:
+            status:
+              type: integer
+              description: Solr status. 0 on success. Observed as 0 even for malformed queries.
+            QTime:
+              type: integer
+              description: Query time in milliseconds.
+            params:
+              type: object
+              additionalProperties: true
+        response:
+          type: object
+          required:
+          - numFound
+          - start
+          - docs
+          properties:
+            numFound:
+              type: integer
+            start:
+              type: integer
+            docs:
+              type: array
+              items:
+                $ref: '#/components/schemas/Document'
+        links:
+          type: object
+          description: Present on every search response. Carries a single `login` URL pointing at the affiliation-gated view of the same query — the API's only signal that a larger, Brown-authenticated result set exists behind Shibboleth.
+          properties:
+            login:
+              type: string
+              format: uri
+    Document:
+      type: object
+      description: One indexed object. The field set is Solr-dynamic and varies by object type; `fl=*` returned 50+ fields per document at probe time. Only the fields common to every probed document are typed here — see vocabulary/brown-bdr-field-vocabulary.yml for the wider field inventory.
+      additionalProperties: true
+      properties:
+        pid:
+          type: string
+          example: bdr:80246
+        primary_title:
+          type: string
+        abstract:
+          type: array
+          items:
+            type: string
+        object_type:
+          type: string
+          example: image
+        resource_type_ssi:
+          type: string
+x-access:
+  authentication: none
+  description: Every documented BDR API endpoint is anonymous and keyless. There is no API key, no OAuth flow and no registration step. The boundary is not authentication but VISIBILITY — the index exposes `_display_public_bsi`, `_display_brown_bsi` and `_display_private_bsi`, and the anonymous API sees only public objects. Brown-affiliated access to the wider set goes through the Shibboleth login the `links.login` key on every search response points at.
+x-throttling:
+  observed_headers: none
+  description: 'No rate-limit headers were returned on any probe. Brown documents in its own API wiki that Cloudflare bot protection was added in Spring 2025 and may affect API users requesting a large volume of items at a high rate, and advises Brown community members to use the VPN to reduce the impact. The repository''s robots.txt sets `Crawl-delay: 30`. The 500-row response cap is the only hard, observable limit.'

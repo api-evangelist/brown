@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/brown/refs/heads/main/json-schema/brown-bdr-document.json",
+  "title": "Document",
+  "x-provenance": {
+    "generated": "2026-08-30",
+    "method": "derived",
+    "source": "Derived from openapi/brown-bdr-api-openapi.yml and openapi/brown-bdr-iiif-openapi.yml, which were themselves derived from Brown's own API documentation wiki plus live probes on 2026-08-30. Brown publishes no JSON Schema. Not a Brown-authored artifact.",
+    "x-operator": "institution"
+  },
+  "type": "object",
+  "description": "One indexed object. The field set is Solr-dynamic and varies by object type; `fl=*` returned 50+ fields per document at probe time. Only the fields common to every probed document are typed here \u2014 see vocabulary/brown-bdr-field-vocabulary.yml for the wider field inventory.",
+  "additionalProperties": true,
+  "properties": {
+    "pid": {
+      "type": "string",
+      "example": "bdr:80246"
+    },
+    "primary_title": {
+      "type": "string"
+    },
+    "abstract": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "object_type": {
+      "type": "string",
+      "example": "image"
+    },
+    "resource_type_ssi": {
+      "type": "string"
+    }
+  }
+}

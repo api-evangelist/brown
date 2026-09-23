@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/brown/refs/heads/main/json-schema/brown-bdr-manifest.json",
+  "title": "Manifest",
+  "x-provenance": {
+    "generated": "2026-08-30",
+    "method": "derived",
+    "source": "Derived from openapi/brown-bdr-api-openapi.yml and openapi/brown-bdr-iiif-openapi.yml, which were themselves derived from Brown's own API documentation wiki plus live probes on 2026-08-30. Brown publishes no JSON Schema. Not a Brown-authored artifact.",
+    "x-operator": "institution"
+  },
+  "type": "object",
+  "description": "IIIF Presentation API 2.x manifest, as observed.",
+  "additionalProperties": true,
+  "properties": {
+    "@context": {
+      "type": "string",
+      "const": "http://iiif.io/api/presentation/2/context.json"
+    },
+    "@id": {
+      "type": "string",
+      "format": "uri"
+    },
+    "@type": {
+      "type": "string",
+      "const": "sc:Manifest"
+    },
+    "label": {
+      "type": "string"
+    },
+    "metadata": {
+      "type": "array",
+      "description": "Label/value pairs projected from the object's MODS record.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "sequences": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  }
+}

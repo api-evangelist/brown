@@ -1,0 +1,234 @@
+# x-archived-from: brown-bdr-iiif-openapi.yml
+# x-archived-on: 2026-09-16
+openapi: 3.1.0
+info:
+  title: Brown Digital Repository IIIF Image and Presentation API
+  version: '2026-08-30'
+  summary: Brown University Library's IIIF Image API 2.x and Presentation API 2.x surface over the BDR.
+  description: |-
+    The Brown Digital Repository serves its images through the International Image Interoperability
+    Framework. Two IIIF surfaces were confirmed live on 2026-08-30 at
+    `repository.library.brown.edu`:
+
+    * IIIF Image API 2.x — `@context: http://iiif.io/api/image/2/context.json`, with `protocol`,
+      `width`, `height`, a seven-step `sizes` pyramid and 512x512 `tiles`.
+    * IIIF Presentation API 2.x — `@context: http://iiif.io/api/presentation/2/context.json`,
+      `@type: sc:Manifest`, with a `metadata` block projected from the object's MODS record.
+
+    Discovery note worth stating plainly: these paths are NOT advertised on an index page and the
+    repository's robots.txt disallows `/iiif`. The documented route to them is the item API, whose
+    `links.views.iiif_image_info` and `links.views.iiif_manifest` keys return the exact URLs. A
+    client should follow those links rather than construct IIIF paths by hand.
+
+    This document was DERIVED from live probes and from the link structure Brown's own item API
+    emits. Brown publishes no IIIF specification of its own; the conformance being described is
+    conformance to the IIIF community specifications, not a Brown contract.
+  contact:
+    name: Brown University Library
+    url: https://library.brown.edu
+  x-operator: institution
+  x-operator-basis: >-
+    Same host and same application as the BDR API — `repository.library.brown.edu`, under Brown's own
+    registrable domain, running Brown University Library software. IIIF is a community
+    specification, not a vendor platform; serving it does not make the surface someone else's.
+  x-provenance:
+    generated: '2026-08-30'
+    method: derived
+    source:
+    - https://repository.library.brown.edu/api/items/bdr:80246/
+    - https://repository.library.brown.edu/iiif/image/bdr:80246/info.json
+    - https://repository.library.brown.edu/iiif/presentation/bdr:80246/manifest.json
+    - https://iiif.io/guides/guides/repository.library.brown.edu/
+    note: >-
+      Derived from live probes on 2026-08-30 plus the IIIF community's own case-study guide for
+      repository.library.brown.edu. Not published by Brown as a specification.
+servers:
+- url: https://repository.library.brown.edu
+  description: Brown Digital Repository production
+tags:
+- name: IIIF Image
+  description: IIIF Image API 2.x — image information and derivative delivery.
+- name: IIIF Presentation
+  description: IIIF Presentation API 2.x — manifests describing an object's structure and metadata.
+paths:
+  /iiif/image/{pid}/info.json:
+    get:
+      tags: [IIIF Image]
+      operationId: getIiifImageInfo
+      summary: IIIF Image API 2.x image information document
+      description: >-
+        Returns the image information document for a BDR object's image. Confirmed live for
+        `bdr:80246`, which reports a 6335x8560 source with a seven-step size pyramid down to 99x134
+        and 512x512 tiles.
+      parameters:
+      - name: pid
+        in: path
+        required: true
+        description: BDR persistent identifier for the object whose image is being described.
+        schema:
+          type: string
+          pattern: '^bdr:[A-Za-z0-9]+$'
+        example: bdr:80246
+      responses:
+        '200':
+          description: IIIF Image information document
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageInfo'
+        '404':
+          description: >-
+            Not Found. Observed for a PID with no image derivative — `bdr:1002496`, a video object,
+            returned 404 here while returning 200 from the item API. Presence in the repository does
+            not imply presence on the IIIF surface.
+  /iiif/image/{pid}/{region}/{size}/{rotation}/{quality}.{format}:
+    get:
+      tags: [IIIF Image]
+      operationId: getIiifImage
+      summary: IIIF Image API 2.x image request
+      description: >-
+        Standard IIIF Image API 2.x request syntax. Parameter semantics are the IIIF specification's,
+        not Brown's; the supported sizes and tile geometry for a given object are declared by that
+        object's info.json.
+      parameters:
+      - name: pid
+        in: path
+        required: true
+        description: BDR persistent identifier, used as the IIIF image identifier.
+        schema: {type: string}
+        example: bdr:80246
+      - name: region
+        in: path
+        required: true
+        description: 'IIIF region selector: full, square, x,y,w,h or pct:x,y,w,h.'
+        schema: {type: string}
+        example: full
+      - name: size
+        in: path
+        required: true
+        description: 'IIIF size selector: full, max, w,, ,h, w,h or pct:n. Sizes the object actually holds are listed in its info.json.'
+        schema: {type: string}
+        example: '792,'
+      - name: rotation
+        in: path
+        required: true
+        description: Clockwise rotation in degrees, optionally prefixed with ! to mirror first.
+        schema: {type: string}
+        example: '0'
+      - name: quality
+        in: path
+        required: true
+        description: IIIF image quality.
+        schema: {type: string, enum: [default, color, gray, bitonal]}
+        example: default
+      - name: format
+        in: path
+        required: true
+        description: Output format. Availability per object is declared in its info.json.
+        schema: {type: string, enum: [jpg, png, tif, gif, jp2, pdf, webp]}
+        example: jpg
+      responses:
+        '200':
+          description: Image derivative
+          content:
+            image/jpeg:
+              schema: {type: string, format: binary}
+        '400':
+          description: Malformed IIIF request, per IIIF Image API 2.x.
+        '404':
+          description: Unknown identifier or unsupported derivative.
+  /iiif/presentation/{pid}/manifest.json:
+    get:
+      tags: [IIIF Presentation]
+      operationId: getIiifManifest
+      summary: IIIF Presentation API 2.x manifest
+      description: >-
+        Returns a `sc:Manifest` for a repository object. The `metadata` array is projected from the
+        object's MODS record — the probed manifest for `bdr:80246` carried `Full_Title`, `Subtitle`
+        and further descriptive labels drawn straight from MODS.
+      parameters:
+      - name: pid
+        in: path
+        required: true
+        description: BDR persistent identifier for the object the manifest describes.
+        schema:
+          type: string
+          pattern: '^bdr:[A-Za-z0-9]+$'
+        example: bdr:80246
+      responses:
+        '200':
+          description: IIIF Presentation manifest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Manifest'
+        '404':
+          description: Not Found. Observed for objects with no IIIF derivative.
+components:
+  schemas:
+    ImageInfo:
+      type: object
+      description: IIIF Image API 2.x information document, as observed.
+      additionalProperties: true
+      properties:
+        '@context':
+          type: string
+          const: http://iiif.io/api/image/2/context.json
+        '@id':
+          type: string
+          format: uri
+        protocol:
+          type: string
+          const: http://iiif.io/api/image
+        width: {type: integer}
+        height: {type: integer}
+        sizes:
+          type: array
+          items:
+            type: object
+            properties:
+              width: {type: integer}
+              height: {type: integer}
+        tiles:
+          type: array
+          items:
+            type: object
+            properties:
+              width: {type: integer}
+              height: {type: integer}
+              scaleFactors:
+                type: array
+                items: {type: integer}
+    Manifest:
+      type: object
+      description: IIIF Presentation API 2.x manifest, as observed.
+      additionalProperties: true
+      properties:
+        '@context':
+          type: string
+          const: http://iiif.io/api/presentation/2/context.json
+        '@id':
+          type: string
+          format: uri
+        '@type':
+          type: string
+          const: sc:Manifest
+        label: {type: string}
+        metadata:
+          type: array
+          description: Label/value pairs projected from the object's MODS record.
+          items:
+            type: object
+            properties:
+              label: {type: string}
+              value: {type: string}
+        sequences:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+  securitySchemes: {}
+security: []
+x-access:
+  authentication: none
+  description: Anonymous and keyless for public objects, matching the BDR API.

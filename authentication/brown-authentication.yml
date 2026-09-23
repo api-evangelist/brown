@@ -1,0 +1,69 @@
+specification: API Evangelist Authentication
+specificationVersion: '0.1'
+provider: Brown University
+providerId: brown
+generated: '2026-08-30'
+method: derived
+probed: '2026-08-30'
+method_note: >-
+  Authored by API Evangelist from live probes on 2026-08-30, not published by Brown. `derived` is the
+  authorship class the catalog's provenance manifest reads; the probe evidence itself is in `source`
+  and in the per-finding `evidence` blocks below.
+source:
+- https://repository.library.brown.edu/api/search/?q=*&rows=1
+- https://repository.library.brown.edu/api/login/
+- https://sso.brown.edu/idp/shibboleth
+- https://mdq.incommon.org/entities/https%3A%2F%2Fsso.brown.edu%2Fidp%2Fshibboleth
+- https://ithelp.brown.edu/kb/shibboleth-single-sign-on
+description: >-
+  Brown's programmable surface has two authentication stories and they do not meet. The public BDR
+  API has no authentication at all — no key, no OAuth, no registration, nothing to obtain. The
+  institution's real identity infrastructure is a SAML 2.0 Shibboleth identity provider registered in
+  InCommon, which is a browser SSO protocol and is not usable as API credentials. There is no bridge:
+  no OAuth authorization server, no token endpoint, no OIDC discovery document, no dynamic client
+  registration, no protected-resource metadata. An agent or a script cannot authenticate to anything
+  at Brown; it can only read what is already public.
+surfaces:
+- name: Brown Digital Repository (BDR) API
+  x-operator: institution
+  scheme: none
+  registration: not applicable
+  evidence:
+    url: https://repository.library.brown.edu/api/search/?q=*&rows=1
+    status: 200
+    note: Returned 200 and a full result set with no credential of any kind.
+  boundary: >-
+    The access boundary is visibility, not authentication. Every indexed object carries
+    `_display_public_bsi`, `_display_brown_bsi` and `_display_private_bsi`; the anonymous API sees
+    the public set. Every search response includes a `links.login` URL pointing at
+    `https://repository.library.brown.edu/api/login/?next=<the same query>`, which is the API
+    telling a caller that a larger, Brown-authenticated view of that exact query exists. That login
+    is a browser Shibboleth redirect, not a token grant.
+- name: Brown Shibboleth Identity Provider
+  x-operator: institution
+  scheme: SAML 2.0 web browser SSO
+  entityID: https://sso.brown.edu/idp/shibboleth
+  evidence:
+    url: https://sso.brown.edu/idp/shibboleth
+    status: 200
+    content_type: application/xml;charset=UTF-8
+    bytes: 5652
+  bindings:
+  - urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST -> https://sso.brown.edu/idp/profile/SAML2/POST/SSO
+  - urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect -> https://sso.brown.edu/idp/profile/SAML2/Redirect/SSO
+  - urn:mace:shibboleth:1.0:profiles:AuthnRequest -> https://sso.brown.edu/idp/profile/Shibboleth/SSO
+  scope: brown.edu
+  note: >-
+    Machine-readable and self-published, which is rare — most institutions leave their IdP metadata
+    to the federation aggregate. It is nonetheless a human-browser protocol. It grants no API access.
+absent:
+  oauth2: true
+  openid_connect_discovery: true
+  api_keys: true
+  dynamic_client_registration: true
+  protected_resource_metadata: true
+  delegated_identity: true
+  service_accounts: true
+  note: >-
+    Probed and not found. Recorded as absent rather than omitted, because absence here is the
+    finding: Brown publishes a strong institutional identity contract and no way for software to use it.

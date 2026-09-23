@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/brown/refs/heads/main/json-schema/brown-bdr-searchresponse.json",
+  "title": "SearchResponse",
+  "x-provenance": {
+    "generated": "2026-08-30",
+    "method": "derived",
+    "source": "Derived from openapi/brown-bdr-api-openapi.yml and openapi/brown-bdr-iiif-openapi.yml, which were themselves derived from Brown's own API documentation wiki plus live probes on 2026-08-30. Brown publishes no JSON Schema. Not a Brown-authored artifact.",
+    "x-operator": "institution"
+  },
+  "type": "object",
+  "required": [
+    "responseHeader",
+    "response"
+  ],
+  "properties": {
+    "responseHeader": {
+      "type": "object",
+      "description": "Solr response header. `params` echoes the query AFTER the service applied its own defaults and clamps, which is how the 500-row cap becomes visible.",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "description": "Solr status. 0 on success. Observed as 0 even for malformed queries."
+        },
+        "QTime": {
+          "type": "integer",
+          "description": "Query time in milliseconds."
+        },
+        "params": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "response": {
+      "type": "object",
+      "required": [
+        "numFound",
+        "start",
+        "docs"
+      ],
+      "properties": {
+        "numFound": {
+          "type": "integer"
+        },
+        "start": {
+          "type": "integer"
+        },
+        "docs": {
+          "type": "array",
+          "items": {
+            "$ref": "https://raw.githubusercontent.com/api-evangelist/brown/refs/heads/main/json-schema/brown-bdr-document.json"
+          }
+        }
+      }
+    },
+    "links": {
+      "type": "object",
+      "description": "Present on every search response. Carries a single `login` URL pointing at the affiliation-gated view of the same query \u2014 the API's only signal that a larger, Brown-authenticated result set exists behind Shibboleth.",
+      "properties": {
+        "login": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    }
+  }
+}

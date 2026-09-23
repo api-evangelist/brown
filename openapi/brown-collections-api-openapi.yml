@@ -1,0 +1,150 @@
+openapi: 3.2.0
+info:
+  title: Brown Digital Repository (BDR) Collections API
+  version: '2026-08-30'
+  summary: Public, keyless read API over the Brown University Library's digital repository.
+  description: 'The Brown Digital Repository (BDR) is the Brown University Library''s platform for gathering,
+
+    indexing, storing, preserving and making available digital assets produced by scholarly,
+
+    instructional, research and administrative activity at Brown.'
+  contact:
+    name: Brown University Library
+    url: https://library.brown.edu
+  termsOfService: https://policy.brown.edu/policy/privacy
+  license:
+    name: Rights vary per repository object; see each object's MODS metadata
+    url: https://repository.library.brown.edu/studio/
+  x-operator: institution
+  x-operator-basis: Host is under brown.edu, Brown's own registrable domain. The repository application is authored and maintained by the Brown University Library (public source in https://github.com/Brown-University-Library — bdr_indexer, bdrxml, bdr_uploader_hub_project, bdr-api-tools), the API documentation is written by Brown Library staff in Brown's own GitHub wiki, and DataCite lists the repository as Brown's registered client BROWN.BDR. No vendor platform identity appears in servers[], info.title or info.contact.
+  x-provenance:
+    generated: '2026-08-30'
+    method: derived
+    source:
+    - https://github.com/Brown-University-Library/bdr_api_documentation/wiki
+    - https://repository.library.brown.edu/api/
+    - https://repository.library.brown.edu/api/search/?q=primary_title:irish&rows=2&fl=pid,primary_title,abstract
+    - https://repository.library.brown.edu/api/items/bdr:80246/
+    - https://repository.library.brown.edu/api/collections/
+    - https://api.datacite.org/clients/brown.bdr
+    note: Derived from Brown's own prose documentation plus live probing on 2026-08-30. Not published by Brown as a specification. Do not present this document as a Brown-authored contract.
+servers:
+- url: https://repository.library.brown.edu
+  description: Brown Digital Repository production
+security: []
+tags:
+- name: Collections
+  description: Repository collections and their membership.
+paths:
+  /api/collections/:
+    get:
+      tags:
+      - Collections
+      operationId: listTopLevelCollections
+      summary: List top-level collections
+      description: Returns the repository's TOP-LEVEL collections only, which Brown notes explicitly — this is not the full collection tree. Descend via each collection's own endpoint.
+      responses:
+        '200':
+          description: Top-level collection list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionList'
+        '500':
+          description: Internal server error, per Brown's documented global exception behaviour.
+  /api/collections/{collection_id}/:
+    get:
+      tags:
+      - Collections
+      operationId: getCollection
+      summary: Get one collection, its sub-collections and its items
+      description: Accepts either the numeric database id (`403`) or the PID (`bdr:k499pm6d`); both were confirmed live. Responses that carry items return URLs to both the web view and the item API view of each member.
+      parameters:
+      - name: collection_id
+        in: path
+        required: true
+        description: Numeric collection id or `bdr:`-prefixed PID.
+        schema:
+          type: string
+        examples:
+          numeric:
+            value: '403'
+          pid:
+            value: bdr:k499pm6d
+      - name: q
+        in: query
+        required: false
+        description: Sub-query restricting the returned items within this collection.
+        schema:
+          type: string
+        example: greek
+      responses:
+        '200':
+          description: Collection record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Collection'
+        '404':
+          description: Not Found. OBSERVED for an unknown collection id, as a nine-byte `text/html` body.
+components:
+  schemas:
+    Collection:
+      type: object
+      description: A single collection, its sub-collections and its member items.
+      additionalProperties: true
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        items:
+          type: object
+          additionalProperties: true
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/CollectionRef'
+    CollectionList:
+      type: object
+      required:
+      - collections
+      properties:
+        collections:
+          type: array
+          items:
+            $ref: '#/components/schemas/CollectionRef'
+    CollectionRef:
+      type: object
+      properties:
+        pid:
+          type: string
+        id:
+          type: string
+        db_id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        json_uri:
+          type: string
+          format: uri
+          description: Collection API URL for this collection.
+        uri:
+          type: string
+          format: uri
+          description: Human web view of this collection.
+        thumbnail_url:
+          type: string
+          format: uri
+x-access:
+  authentication: none
+  description: Every documented BDR API endpoint is anonymous and keyless. There is no API key, no OAuth flow and no registration step. The boundary is not authentication but VISIBILITY — the index exposes `_display_public_bsi`, `_display_brown_bsi` and `_display_private_bsi`, and the anonymous API sees only public objects. Brown-affiliated access to the wider set goes through the Shibboleth login the `links.login` key on every search response points at.
+x-throttling:
+  observed_headers: none
+  description: 'No rate-limit headers were returned on any probe. Brown documents in its own API wiki that Cloudflare bot protection was added in Spring 2025 and may affect API users requesting a large volume of items at a high rate, and advises Brown community members to use the VPN to reduce the impact. The repository''s robots.txt sets `Crawl-delay: 30`. The 500-row response cap is the only hard, observable limit.'

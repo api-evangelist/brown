@@ -1,0 +1,510 @@
+openapi: 3.1.0
+info:
+  title: Brown Digital Repository (BDR) API
+  version: '2026-08-30'
+  summary: Public, keyless read API over the Brown University Library's digital repository.
+  description: |-
+    The Brown Digital Repository (BDR) is the Brown University Library's platform for gathering,
+    indexing, storing, preserving and making available digital assets produced by scholarly,
+    instructional, research and administrative activity at Brown. It exposes three public,
+    unauthenticated read endpoints — an item API, a collection API and a Solr-backed search API —
+    plus a two-key root link index at `/api/`.
+
+    This document was DERIVED. Brown does not publish an OpenAPI, AsyncAPI or any other machine-
+    readable contract for the BDR. It publishes prose documentation, which it authors itself, in the
+    wiki of its own `Brown-University-Library/bdr_api_documentation` GitHub repository and on the
+    `/studio/api-docs/` page of the repository application. Every path, parameter, status code and
+    schema below was reconciled between that first-party prose and live probes run on 2026-08-30;
+    where the two disagree, the OBSERVED behaviour is documented and the divergence is called out in
+    the operation description and in `errors/brown-bdr-errors.yml`. Nothing here is asserted that was
+    not either published by Brown or observed on the wire.
+
+    Operator: institution. `repository.library.brown.edu` is under Brown's own registrable domain;
+    the application is Brown University Library software (its indexer, XML layer, uploader hub and
+    API tooling are public repositories in the Brown-University-Library GitHub organization), and
+    DataCite registers the repository as client BROWN.BDR, "Brown Digital Repository", with
+    14,089 DOIs minted under prefix 10.26300. Cloudflare fronts the host as a CDN and bot-protection
+    layer; that is delivery, not operation.
+  contact:
+    name: Brown University Library
+    url: https://library.brown.edu
+  termsOfService: https://policy.brown.edu/policy/privacy
+  license:
+    name: Rights vary per repository object; see each object's MODS metadata
+    url: https://repository.library.brown.edu/studio/
+  x-operator: institution
+  x-operator-basis: >-
+    Host is under brown.edu, Brown's own registrable domain. The repository application is authored
+    and maintained by the Brown University Library (public source in
+    https://github.com/Brown-University-Library — bdr_indexer, bdrxml, bdr_uploader_hub_project,
+    bdr-api-tools), the API documentation is written by Brown Library staff in Brown's own GitHub
+    wiki, and DataCite lists the repository as Brown's registered client BROWN.BDR. No vendor
+    platform identity appears in servers[], info.title or info.contact.
+  x-provenance:
+    generated: '2026-08-30'
+    method: derived
+    source:
+    - https://github.com/Brown-University-Library/bdr_api_documentation/wiki
+    - https://repository.library.brown.edu/api/
+    - https://repository.library.brown.edu/api/search/?q=primary_title:irish&rows=2&fl=pid,primary_title,abstract
+    - https://repository.library.brown.edu/api/items/bdr:80246/
+    - https://repository.library.brown.edu/api/collections/
+    - https://api.datacite.org/clients/brown.bdr
+    note: >-
+      Derived from Brown's own prose documentation plus live probing on 2026-08-30. Not published by
+      Brown as a specification. Do not present this document as a Brown-authored contract.
+servers:
+- url: https://repository.library.brown.edu
+  description: Brown Digital Repository production
+tags:
+- name: Search
+  description: Solr-backed search across public BDR objects.
+- name: Items
+  description: Metadata for a single repository object, addressed by PID.
+- name: Collections
+  description: Repository collections and their membership.
+- name: Discovery
+  description: The API root link index.
+paths:
+  /api/:
+    get:
+      tags: [Discovery]
+      operationId: getApiRoot
+      summary: API root link index
+      description: >-
+        Returns a two-key object linking to the collection API and to the human documentation page.
+        It is a link index, not a service description; the BDR publishes no machine-readable
+        contract of its own.
+      responses:
+        '200':
+          description: Link index
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiRoot'
+              example:
+                collections: https://repository.library.brown.edu/api/collections/
+                api docs: https://repository.library.brown.edu/studio/api-docs/
+        '500':
+          description: Internal server error, per Brown's documented global exception behaviour.
+  /api/search/:
+    get:
+      tags: [Search]
+      operationId: searchRepository
+      summary: Search public BDR objects
+      description: |-
+        Solr query interface over the public repository index (1,147,400 objects at probe time on
+        2026-08-30). Brown documents that queries follow standard Solr syntax, that a badly formatted
+        query returns 400, and that a successful search returns 200 even with zero results.
+
+        OBSERVED DIVERGENCE: malformed queries did not return 400 on any probe. `q=[`, `q=((` and an
+        unbalanced quote each returned 200 with `responseHeader.status: 0` and an empty or sanitized
+        result set. Treat 400 as documented-but-unobserved.
+
+        OBSERVED, UNDOCUMENTED: `rows` is silently clamped to 500 — `rows=501`, `rows=1000` and
+        `rows=99999` all echoed `rows: "500"` and returned 500 documents. A non-numeric `rows` falls
+        back to 10 and `start=-1` is clamped to 0, both silently. Paginate with `start` rather than
+        raising `rows`.
+      parameters:
+      - name: q
+        in: query
+        required: true
+        description: Solr query string. A subset of Solr query syntax is supported.
+        schema:
+          type: string
+        examples:
+          allObjects:
+            summary: Everything in the public index
+            value: '*'
+          titlePhrase:
+            summary: Title keyword
+            value: primary_title:irish
+          collectionMembership:
+            summary: Members of one collection
+            value: 'rel_is_member_of_collection_ssim:"bdr:wum3gm43"'
+          negation:
+            summary: In a collection but not part of another object
+            value: 'rel_is_member_of_collection_ssim:"bdr:wum3gm43" -rel_is_part_of_ssim:*'
+      - name: fl
+        in: query
+        required: false
+        description: >-
+          Comma-separated Solr field list. Defaults to `*`, which returns 50+ fields per document;
+          narrowing it is the single biggest response-size lever. See vocabulary/brown-bdr-field-vocabulary.yml.
+        schema:
+          type: string
+          default: '*'
+        example: pid,primary_title,abstract
+      - name: rows
+        in: query
+        required: false
+        description: Documents to return. Defaults to 10. Silently clamped to a maximum of 500 (observed).
+        schema:
+          type: integer
+          default: 10
+          minimum: 0
+          maximum: 500
+      - name: start
+        in: query
+        required: false
+        description: Zero-based offset for pagination. Negative values are silently clamped to 0 (observed).
+        schema:
+          type: integer
+          default: 0
+          minimum: 0
+      - name: callback
+        in: query
+        required: false
+        description: >-
+          JSONP callback name. Documented by Brown as accepted on all BDR APIs, and confirmed:
+          supplying it changes the response Content-Type to `application/javascript` and wraps the
+          JSON body in the named function call. JSONP exists here because the API sends no CORS
+          headers — no `Access-Control-Allow-Origin` was returned on any probe, so a browser client
+          on another origin cannot use `fetch` against it.
+        schema:
+          type: string
+        example: myCb
+      responses:
+        '200':
+          description: >-
+            Search result. Returned for successful searches, for searches with zero results, and
+            (observed) for malformed queries.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+            application/javascript:
+              schema:
+                type: string
+                description: JSONP wrapper, returned when `callback` is supplied — the JSON body wrapped in the named function call.
+        '400':
+          description: >-
+            Bad request. Documented by Brown for a badly formatted query; not reproduced by any
+            probe on 2026-08-30.
+          content:
+            text/html:
+              schema:
+                type: string
+        '500':
+          description: >-
+            Internal server error. Documented by Brown as the response to any exception during
+            request processing.
+          content:
+            text/html:
+              schema:
+                type: string
+  /api/items/{pid}/:
+    get:
+      tags: [Items]
+      operationId: getItem
+      summary: Get one repository object
+      description: >-
+        Returns the full metadata record for a single object. The response is link-rich: `api_links`
+        dereferences to collection and search API calls, `links.views.iiif_image_info` and
+        `links.views.iiif_manifest` point at the IIIF surface, and `links.content_datastreams` and
+        `links.descriptive_datastreams` point at the object's binary and MODS XML.
+      parameters:
+      - name: pid
+        in: path
+        required: true
+        description: Persistent identifier, e.g. `bdr:80246`. Both numeric and Noid-style suffixes occur.
+        schema:
+          type: string
+          pattern: '^bdr:[A-Za-z0-9]+$'
+        example: bdr:80246
+      responses:
+        '200':
+          description: Object metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '403':
+          description: >-
+            Forbidden. Documented by Brown for an item that is not found OR is a private object.
+          content:
+            text/html:
+              schema:
+                type: string
+        '404':
+          description: >-
+            Not Found. OBSERVED behaviour for an unknown PID — `bdr:0000000` returned 404 with the
+            nine-byte `text/html` body `Not Found`, not the documented 403 and not JSON. A client
+            parsing every response as JSON will throw here.
+          content:
+            text/html:
+              schema:
+                type: string
+              example: Not Found
+        '500':
+          description: Internal server error, per Brown's documented exception behaviour.
+  /api/collections/:
+    get:
+      tags: [Collections]
+      operationId: listTopLevelCollections
+      summary: List top-level collections
+      description: >-
+        Returns the repository's TOP-LEVEL collections only, which Brown notes explicitly — this is
+        not the full collection tree. Descend via each collection's own endpoint.
+      responses:
+        '200':
+          description: Top-level collection list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionList'
+        '500':
+          description: Internal server error, per Brown's documented global exception behaviour.
+  /api/collections/{collection_id}/:
+    get:
+      tags: [Collections]
+      operationId: getCollection
+      summary: Get one collection, its sub-collections and its items
+      description: >-
+        Accepts either the numeric database id (`403`) or the PID (`bdr:k499pm6d`); both were
+        confirmed live. Responses that carry items return URLs to both the web view and the item API
+        view of each member.
+      parameters:
+      - name: collection_id
+        in: path
+        required: true
+        description: Numeric collection id or `bdr:`-prefixed PID.
+        schema:
+          type: string
+        examples:
+          numeric:
+            value: '403'
+          pid:
+            value: bdr:k499pm6d
+      - name: q
+        in: query
+        required: false
+        description: Sub-query restricting the returned items within this collection.
+        schema:
+          type: string
+        example: greek
+      responses:
+        '200':
+          description: Collection record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Collection'
+        '404':
+          description: Not Found. OBSERVED for an unknown collection id, as a nine-byte `text/html` body.
+components:
+  schemas:
+    ApiRoot:
+      type: object
+      description: The `/api/` link index.
+      properties:
+        collections:
+          type: string
+          format: uri
+        api docs:
+          type: string
+          format: uri
+    SearchResponse:
+      type: object
+      required: [responseHeader, response]
+      properties:
+        responseHeader:
+          type: object
+          description: Solr response header. `params` echoes the query AFTER the service applied its own defaults and clamps, which is how the 500-row cap becomes visible.
+          properties:
+            status:
+              type: integer
+              description: Solr status. 0 on success. Observed as 0 even for malformed queries.
+            QTime:
+              type: integer
+              description: Query time in milliseconds.
+            params:
+              type: object
+              additionalProperties: true
+        response:
+          type: object
+          required: [numFound, start, docs]
+          properties:
+            numFound:
+              type: integer
+            start:
+              type: integer
+            docs:
+              type: array
+              items:
+                $ref: '#/components/schemas/Document'
+        links:
+          type: object
+          description: >-
+            Present on every search response. Carries a single `login` URL pointing at the
+            affiliation-gated view of the same query — the API's only signal that a larger,
+            Brown-authenticated result set exists behind Shibboleth.
+          properties:
+            login:
+              type: string
+              format: uri
+    Document:
+      type: object
+      description: >-
+        One indexed object. The field set is Solr-dynamic and varies by object type; `fl=*` returned
+        50+ fields per document at probe time. Only the fields common to every probed document are
+        typed here — see vocabulary/brown-bdr-field-vocabulary.yml for the wider field inventory.
+      additionalProperties: true
+      properties:
+        pid:
+          type: string
+          example: bdr:80246
+        primary_title:
+          type: string
+        abstract:
+          type: array
+          items:
+            type: string
+        object_type:
+          type: string
+          example: image
+        resource_type_ssi:
+          type: string
+    Item:
+      type: object
+      description: A full object record from the item API.
+      additionalProperties: true
+      required: [pid]
+      properties:
+        pid:
+          type: string
+        object_type:
+          type: string
+        primary_title:
+          type: string
+        uri:
+          type: string
+          format: uri
+          description: Human web view of the object.
+        json_uri:
+          type: string
+          format: uri
+          description: Self link — this item API call.
+        brief:
+          type: object
+          description: Display-oriented summary block; every value is an array of strings.
+          additionalProperties: true
+        relations:
+          $ref: '#/components/schemas/Relations'
+        api_links:
+          type: object
+          description: Dereferenceable API URLs for this object's collections and keywords.
+          additionalProperties: true
+        links:
+          $ref: '#/components/schemas/ItemLinks'
+        views_dict:
+          type: object
+          description: Named viewer and IIIF URLs. Duplicates `links.views`.
+          additionalProperties:
+            type: string
+            format: uri
+        datastreams:
+          type: object
+          description: Per-datastream mimeType, size, SHA-512 checksum and lastModified.
+          additionalProperties: true
+    ItemLinks:
+      type: object
+      properties:
+        thumbnail:
+          type: string
+          format: uri
+        descriptive_datastreams:
+          type: object
+          description: Descriptive metadata datastreams. `MODS` is the descriptive standard the BDR serves, as XML.
+          additionalProperties:
+            type: string
+            format: uri
+        content_datastreams:
+          type: object
+          description: Binary content datastreams, e.g. `highres`, `lowres`.
+          additionalProperties:
+            type: string
+            format: uri
+        views:
+          type: object
+          description: >-
+            Viewer and IIIF endpoints, including `iiif_image_info` and `iiif_manifest`. These are the
+            documented route from the item API into the IIIF surface; the IIIF paths are not
+            otherwise discoverable, and `/iiif` is disallowed in the repository's robots.txt.
+          additionalProperties:
+            type: string
+            format: uri
+    Relations:
+      type: object
+      description: >-
+        Fixed set of relation predicates, each an array. Empty arrays are returned rather than
+        omitted, so a client can rely on every key being present.
+      properties:
+        hasAnnotation: {type: array, items: {type: object, additionalProperties: true}}
+        hasDerivation: {type: array, items: {type: object, additionalProperties: true}}
+        hasDescription: {type: array, items: {type: object, additionalProperties: true}}
+        hasTranscript: {type: array, items: {type: object, additionalProperties: true}}
+        hasTranslation: {type: array, items: {type: object, additionalProperties: true}}
+        hasPart: {type: array, items: {type: object, additionalProperties: true}}
+        isDerivationOf: {type: array, items: {type: object, additionalProperties: true}}
+        isVersionOf: {type: array, items: {type: object, additionalProperties: true}}
+        isTranscriptOf: {type: array, items: {type: object, additionalProperties: true}}
+        isTranslationOf: {type: array, items: {type: object, additionalProperties: true}}
+        isMemberOf: {type: array, items: {type: object, additionalProperties: true}}
+        isPartOf: {type: array, items: {type: object, additionalProperties: true}}
+        isMemberOfCollection:
+          type: array
+          items:
+            $ref: '#/components/schemas/CollectionRef'
+    CollectionList:
+      type: object
+      required: [collections]
+      properties:
+        collections:
+          type: array
+          items:
+            $ref: '#/components/schemas/CollectionRef'
+    CollectionRef:
+      type: object
+      properties:
+        pid: {type: string}
+        id: {type: string}
+        db_id: {type: integer}
+        name: {type: string}
+        description: {type: string}
+        tags: {type: array, items: {type: string}}
+        json_uri: {type: string, format: uri, description: Collection API URL for this collection.}
+        uri: {type: string, format: uri, description: Human web view of this collection.}
+        thumbnail_url: {type: string, format: uri}
+    Collection:
+      type: object
+      description: A single collection, its sub-collections and its member items.
+      additionalProperties: true
+      properties:
+        name: {type: string}
+        description: {type: string}
+        items:
+          type: object
+          additionalProperties: true
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/CollectionRef'
+  securitySchemes: {}
+security: []
+x-access:
+  authentication: none
+  description: >-
+    Every documented BDR API endpoint is anonymous and keyless. There is no API key, no OAuth flow
+    and no registration step. The boundary is not authentication but VISIBILITY — the index exposes
+    `_display_public_bsi`, `_display_brown_bsi` and `_display_private_bsi`, and the anonymous API
+    sees only public objects. Brown-affiliated access to the wider set goes through the Shibboleth
+    login the `links.login` key on every search response points at.
+x-throttling:
+  observed_headers: none
+  description: >-
+    No rate-limit headers were returned on any probe. Brown documents in its own API wiki that
+    Cloudflare bot protection was added in Spring 2025 and may affect API users requesting a large
+    volume of items at a high rate, and advises Brown community members to use the VPN to reduce the
+    impact. The repository's robots.txt sets `Crawl-delay: 30`. The 500-row response cap is the only
+    hard, observable limit.

@@ -1,0 +1,104 @@
+{
+  "example": "BDR IIIF Presentation API 2.x manifest",
+  "provider": "Brown University",
+  "providerId": "brown",
+  "generated": "2026-08-30",
+  "method": "searched",
+  "source": "https://repository.library.brown.edu/iiif/presentation/bdr:80246/manifest.json",
+  "x-operator": "institution",
+  "request": {
+    "method": "GET",
+    "url": "https://repository.library.brown.edu/iiif/presentation/bdr:80246/manifest.json",
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "@context": "http://iiif.io/api/presentation/2/context.json",
+      "@id": "https://repository.library.brown.edu/iiif/presentation/bdr:80246/manifest.json",
+      "@type": "sc:Manifest",
+      "label": "Abe Lincoln as a babe, as a boy and youth",
+      "metadata": [
+        {
+          "label": "Full_Title",
+          "value": "Abe Lincoln as a babe, as a boy and youth: an overlooked interview with Dennis F. Hanks, May 1892, a cousin and close companion of Lincoln"
+        },
+        {
+          "label": "Subtitle",
+          "value": "an overlooked interview with Dennis F. Hanks, May 1892, a cousin and close companion of Lincoln"
+        },
+        {
+          "label": "Series",
+          "value": "http://dl.lib.brown.edu/lincoln/broadsides/index.html"
+        },
+        {
+          "label": "Keywords",
+          "value": "Childhood and youth"
+        },
+        {
+          "label": "Contributors",
+          "value": "McIntyre, Duncan T. (creator)"
+        },
+        {
+          "label": "Date Issued",
+          "value": "1926"
+        },
+        {
+          "label": "Notes",
+          "value": "Includes inset picture and biographical sketch of Dennis F. Hanks; also Gettysburg address"
+        },
+        {
+          "label": "Extent",
+          "value": "1 broadside; 54.3 x 40.2 cm."
+        }
+      ],
+      "description": "Interview about Abraham Lincoln.",
+      "seeAlso": "https://repository.library.brown.edu/api/items/bdr:80246/",
+      "sequences": [
+        {
+          "@type": "sc:Sequence",
+          "label": "Current Page Order",
+          "canvases": [
+            {
+              "@id": "https://repository.library.brown.edu/iiif/presentation/bdr:80246/canvas/page-bdr:80246.json",
+              "@type": "sc:Canvas",
+              "label": "Page 1",
+              "height": 8560,
+              "width": 6335,
+              "images": [
+                {
+                  "@type": "oa:Annotation",
+                  "motivation": "sc:painting",
+                  "resource": {
+                    "@id": "https://repository.library.brown.edu/iiif/image/bdr:80246/full/full/0/default.jpg",
+                    "@type": "dctypes:Image",
+                    "format": "image/jpeg",
+                    "height": 8560,
+                    "width": 6335,
+                    "service": {
+                      "@context": "http://iiif.io/api/image/2/context.json",
+                      "@id": "https://repository.library.brown.edu/iiif/image/bdr:80246",
+                      "profile": "http://iiif.io/api/image/2/level2.json"
+                    }
+                  },
+                  "on": "https://repository.library.brown.edu/iiif/presentation/bdr:80246/canvas/page-bdr:80246.json"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "related": {
+        "@id": "https://repository.library.brown.edu/studio/item/bdr:80246/",
+        "format": "text/html",
+        "label": "BDR display"
+      }
+    }
+  },
+  "note": "Verbatim live response. @context is http://iiif.io/api/presentation/2/context.json, @type sc:Manifest.",
+  "method_note": "Response body is Brown's, captured verbatim from a live probe on 2026-08-30; the surrounding request/response wrapper is API Evangelist's.",
+  "probed": "2026-08-30"
+}

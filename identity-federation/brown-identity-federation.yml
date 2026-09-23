@@ -1,0 +1,139 @@
+specification: API Evangelist Identity Federation
+specificationVersion: '0.1'
+provider: Brown University
+providerId: brown
+generated: '2026-08-30'
+method: derived
+probed: '2026-08-30'
+method_note: >-
+  Authored by API Evangelist from live probes on 2026-08-30, not published by Brown. `derived` is the
+  authorship class the catalog's provenance manifest reads; the probe evidence itself is in `source`
+  and in the per-finding `evidence` blocks below.
+source:
+- https://sso.brown.edu/idp/shibboleth
+- https://mdq.incommon.org/entities/https%3A%2F%2Fsso.brown.edu%2Fidp%2Fshibboleth
+- https://ithelp.brown.edu/kb/shibboleth-single-sign-on
+- whois 128.148.252.212
+- TLS certificate presented by sso.brown.edu:443
+description: >-
+  Brown University's SAML 2.0 identity federation surface, and the strongest institution-operated
+  machine-readable contract in this profile. Operator was settled by IP ownership and certificate
+  subject rather than by hostname, which is the check that has repeatedly overturned university
+  identity attributions elsewhere in this cohort — and here it CONFIRMS the institution verdict
+  rather than overturning it.
+
+  sso.brown.edu resolves to 128.148.252.212, netname BROWN-UNIV, OrgName "Brown University"
+  (ARIN, BROWNU-Z), with no CNAME onto any managed-IdP platform. The TLS certificate is issued by
+  InCommon RSA OV SSL CA 3 with subject `C=US, ST=Rhode Island, O=Brown University,
+  CN=sso.brown.edu` — a Brown-procured OV certificate on Brown's own address space. This is Brown
+  running Shibboleth on Brown hardware, not a tenant of a federation's managed service.
+
+  Brown also SELF-PUBLISHES its per-entity metadata at the entityID URL, which is uncommon: most
+  institutions leave their metadata to the federation aggregate and dereference the entityID to a
+  login page. Both the self-published document and the InCommon-signed aggregate entry are archived
+  in this directory.
+federation:
+  name: InCommon
+  operator: Internet2
+  metadata_query_service: https://mdq.incommon.org/entities/
+  entity_mdq_url: https://mdq.incommon.org/entities/https%3A%2F%2Fsso.brown.edu%2Fidp%2Fshibboleth
+  interfederation: eduGAIN
+  registrationAuthority: https://incommon.org
+  probed: '2026-08-30'
+  status: 200
+  content_type: application/samlmetadata+xml
+  bytes: 8787
+  signed: true
+  signature_algorithm: http://www.w3.org/2001/04/xmldsig-more#rsa-sha256
+  validUntil: '2026-09-13T20:36:59.417Z'
+identity_provider:
+  entityID: https://sso.brown.edu/idp/shibboleth
+  x-operator: institution
+  x-operator-basis: >-
+    Resolves to 128.148.252.212, netname BROWN-UNIV / Organization "Brown University (BROWNU-Z)"
+    (ARIN), with no CNAME off Brown infrastructure. TLS certificate subject names Brown University
+    directly and is issued by InCommon's OV CA. Organization block, all four contact addresses and
+    the shibmd:Scope are Brown's. Nothing in the chain belongs to a vendor.
+  self_published_metadata:
+    url: https://sso.brown.edu/idp/shibboleth
+    status: 200
+    content_type: application/xml;charset=UTF-8
+    bytes: 5652
+    archived: identity-federation/brown-idp-saml-metadata.xml
+  federation_metadata:
+    archived: identity-federation/brown-incommon-mdq-entity.xml
+  organization:
+    display_name: Brown University
+  scope:
+    value: brown.edu
+    regexp: false
+  descriptors:
+  - IDPSSODescriptor
+  - AttributeAuthorityDescriptor
+  protocols:
+  - urn:mace:shibboleth:1.0
+  - urn:oasis:names:tc:SAML:1.1:protocol
+  - urn:oasis:names:tc:SAML:2.0:protocol
+  endpoints:
+  - service: SingleSignOnService
+    binding: urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST
+    location: https://sso.brown.edu/idp/profile/SAML2/POST/SSO
+  - service: SingleSignOnService
+    binding: urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign
+    location: https://sso.brown.edu/idp/profile/SAML2/POST-SimpleSign/SSO
+  - service: SingleSignOnService
+    binding: urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect
+    location: https://sso.brown.edu/idp/profile/SAML2/Redirect/SSO
+  - service: SingleSignOnService
+    binding: urn:mace:shibboleth:1.0:profiles:AuthnRequest
+    location: https://sso.brown.edu/idp/profile/Shibboleth/SSO
+  - service: AttributeService
+    binding: urn:oasis:names:tc:SAML:2.0:bindings:SOAP
+    location: https://sso.brown.edu:8443/idp/profile/SAML2/SOAP/AttributeQuery
+  - service: ArtifactResolutionService
+    binding: urn:oasis:names:tc:SAML:2.0:bindings:SOAP
+    location: https://sso.brown.edu:8443/idp/profile/SAML2/SOAP/ArtifactResolution
+  entity_categories:
+  - id: http://id.incommon.org/category/research-and-scholarship
+    name: InCommon Research & Scholarship
+    meaning: >-
+      Brown's IdP commits to releasing a baseline attribute bundle to R&S service providers without
+      per-SP negotiation. This is the single most consequential machine-readable commitment on the
+      surface — it is what makes Brown identities usable at research services worldwide.
+  - id: http://refeds.org/category/research-and-scholarship
+    name: REFEDS Research & Scholarship
+  - id: https://refeds.org/sirtfi
+    name: REFEDS Sirtfi
+    meaning: >-
+      A published assurance framework commitment covering operational security, incident response and
+      participant responsibility. Backed here by a dedicated
+      http://refeds.org/metadata/contactType/security contact (isg@brown.edu) in the metadata.
+  - id: http://id.incommon.org/category/registered-by-incommon
+    name: Registered by InCommon
+  contacts:
+  - type: technical
+    email: CIS-EAS-IdMgmt@brown.edu
+  - type: administrative
+    email: CIS-EAS-IdMgmt@brown.edu
+  - type: support
+    email: help@brown.edu
+  - type: http://refeds.org/metadata/contactType/security
+    email: isg@brown.edu
+  ui:
+    display_name: Brown University
+    logo: https://sso.brown.edu/idp/images/brown-shib-80.png
+  human_documentation: https://ithelp.brown.edu/kb/shibboleth-single-sign-on
+service_providers:
+  found: 0
+  note: >-
+    No Brown-registered SAML service provider entity was located. Only the IdP side of the
+    federation is evidenced here.
+caveats:
+- >-
+  SAML browser SSO is not API authentication. This contract is machine-readable and institution-
+  operated, and it still gives a script or an agent no way to obtain credentials. See
+  authentication/brown-authentication.yml.
+- >-
+  The self-published metadata carries no validUntil and its signing certificate dates from 2010 with
+  a 2030 expiry. The InCommon aggregate entry is signed and expires 2026-09-13; consumers should
+  prefer the MDQ entry.

@@ -1,0 +1,43 @@
+{
+  "example": "BDR search API \u2014 malformed Solr query",
+  "provider": "Brown University",
+  "providerId": "brown",
+  "generated": "2026-08-30",
+  "method": "searched",
+  "source": "https://repository.library.brown.edu/api/search/?q=%5B",
+  "x-operator": "institution",
+  "request": {
+    "method": "GET",
+    "url": "https://repository.library.brown.edu/api/search/?q=%5B",
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "responseHeader": {
+        "status": 0,
+        "QTime": 0,
+        "params": {
+          "q": "[",
+          "fl": "*",
+          "rows": "10",
+          "wt": "json"
+        }
+      },
+      "response": {
+        "numFound": 0,
+        "start": 0,
+        "docs": []
+      },
+      "links": {
+        "login": "https://repository.library.brown.edu/api/login/?next=/api/search/%3Fq%3D%255B"
+      }
+    }
+  },
+  "note": "Probed error case. Brown documents that a badly formatted query returns 400; this unbalanced-bracket probe returned 200 with an empty result set instead, so the documented and observed behaviour diverge. Recorded as observed, not as documented.",
+  "method_note": "Response body is Brown's, captured verbatim from a live probe on 2026-08-30; the surrounding request/response wrapper is API Evangelist's.",
+  "probed": "2026-08-30"
+}

@@ -1,0 +1,75 @@
+openapi: 3.2.0
+info:
+  title: Brown Digital Repository (BDR) Discovery API
+  version: '2026-08-30'
+  summary: Public, keyless read API over the Brown University Library's digital repository.
+  description: 'The Brown Digital Repository (BDR) is the Brown University Library''s platform for gathering,
+
+    indexing, storing, preserving and making available digital assets produced by scholarly,
+
+    instructional, research and administrative activity at Brown.'
+  contact:
+    name: Brown University Library
+    url: https://library.brown.edu
+  termsOfService: https://policy.brown.edu/policy/privacy
+  license:
+    name: Rights vary per repository object; see each object's MODS metadata
+    url: https://repository.library.brown.edu/studio/
+  x-operator: institution
+  x-operator-basis: Host is under brown.edu, Brown's own registrable domain. The repository application is authored and maintained by the Brown University Library (public source in https://github.com/Brown-University-Library — bdr_indexer, bdrxml, bdr_uploader_hub_project, bdr-api-tools), the API documentation is written by Brown Library staff in Brown's own GitHub wiki, and DataCite lists the repository as Brown's registered client BROWN.BDR. No vendor platform identity appears in servers[], info.title or info.contact.
+  x-provenance:
+    generated: '2026-08-30'
+    method: derived
+    source:
+    - https://github.com/Brown-University-Library/bdr_api_documentation/wiki
+    - https://repository.library.brown.edu/api/
+    - https://repository.library.brown.edu/api/search/?q=primary_title:irish&rows=2&fl=pid,primary_title,abstract
+    - https://repository.library.brown.edu/api/items/bdr:80246/
+    - https://repository.library.brown.edu/api/collections/
+    - https://api.datacite.org/clients/brown.bdr
+    note: Derived from Brown's own prose documentation plus live probing on 2026-08-30. Not published by Brown as a specification. Do not present this document as a Brown-authored contract.
+servers:
+- url: https://repository.library.brown.edu
+  description: Brown Digital Repository production
+security: []
+tags:
+- name: Discovery
+  description: The API root link index.
+paths:
+  /api/:
+    get:
+      tags:
+      - Discovery
+      operationId: getApiRoot
+      summary: API root link index
+      description: Returns a two-key object linking to the collection API and to the human documentation page. It is a link index, not a service description; the BDR publishes no machine-readable contract of its own.
+      responses:
+        '200':
+          description: Link index
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiRoot'
+              example:
+                collections: https://repository.library.brown.edu/api/collections/
+                api docs: https://repository.library.brown.edu/studio/api-docs/
+        '500':
+          description: Internal server error, per Brown's documented global exception behaviour.
+components:
+  schemas:
+    ApiRoot:
+      type: object
+      description: The `/api/` link index.
+      properties:
+        collections:
+          type: string
+          format: uri
+        api docs:
+          type: string
+          format: uri
+x-access:
+  authentication: none
+  description: Every documented BDR API endpoint is anonymous and keyless. There is no API key, no OAuth flow and no registration step. The boundary is not authentication but VISIBILITY — the index exposes `_display_public_bsi`, `_display_brown_bsi` and `_display_private_bsi`, and the anonymous API sees only public objects. Brown-affiliated access to the wider set goes through the Shibboleth login the `links.login` key on every search response points at.
+x-throttling:
+  observed_headers: none
+  description: 'No rate-limit headers were returned on any probe. Brown documents in its own API wiki that Cloudflare bot protection was added in Spring 2025 and may affect API users requesting a large volume of items at a high rate, and advises Brown community members to use the VPN to reduce the impact. The repository''s robots.txt sets `Crawl-delay: 30`. The 500-row response cap is the only hard, observable limit.'

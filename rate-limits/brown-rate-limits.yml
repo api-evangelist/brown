@@ -4,32 +4,97 @@ schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main
 provider: Brown University
 providerId: brown
 created: '2026-06-03'
-modified: '2026-06-03'
-reconciled: false
+modified: '2026-08-30'
+generated: '2026-08-30'
+method: derived
+probed: '2026-08-30'
+method_note: >-
+  Authored by API Evangelist from live probes on 2026-08-30, not published by Brown. `derived` is the
+  authorship class the catalog's provenance manifest reads; the probe evidence itself is in `source`
+  and in the per-finding `evidence` blocks below.
+x-operator: institution
+reconciled: true
 tags:
 - Education
 - Higher Education
 - University
 - Rate Limiting
 description: >-
-  Brown University does not publish a unified public rate-limit table across its APIs. Open
-  metadata and harvesting endpoints (OAI-PMH, IIIF, library) may throttle large-scale
-  or automated harvesting; clients should harvest politely, honor Retry-After, and
-  contact the relevant service for bulk access.
-notes: Confirm per-service limits with each API's documentation; harvest responsibly.
+  Brown publishes no rate-limit table and returns no rate-limit headers. What it does publish, in its
+  own BDR API wiki, is a plain-language throttling notice; and what it enforces, observably, is a hard
+  response-size cap and a Cloudflare bot-protection layer. Those three things are recorded here with
+  their evidence.
+
+  This artifact was corrected on 2026-08-30. The 2026-06-03 version advised honoring throttling on
+  "OAI-PMH, IIIF, library" endpoints. Brown operates no OAI-PMH endpoint — seven candidate paths were
+  probed and all returned 404 — so that guidance was describing a surface that does not exist.
 sources:
-- https://raw.githubusercontent.com/api-evangelist/brown/refs/heads/main/apis.yml
+- https://github.com/Brown-University-Library/bdr_api_documentation/wiki
+- https://repository.library.brown.edu/robots.txt
+- https://repository.library.brown.edu/api/search/?q=*&rows=99999
+- https://repository.library.brown.edu/studio/api-docs/
 responseCodes:
-  throttled: 429
+  throttled: null
+  note: >-
+    No 429 was observed at probe volume and no Retry-After, RateLimit-* or X-RateLimit-* header was
+    returned by any endpoint. Cloudflare's challenge, when it fires, arrives as an HTTP 200 carrying a
+    Turnstile interstitial rather than as a throttling status.
 limits:
-- name: Default
+- name: Search response size
+  scope: request
+  metric: documents-per-response
+  limit: 500
+  enforced: true
+  observed: true
+  evidence:
+    url: https://repository.library.brown.edu/api/search/?q=*&rows=99999
+    status: 200
+    echoed_rows: '500'
+  notes: >-
+    The only hard, observable limit on the surface, and it is undocumented. rows=501, rows=1000 and
+    rows=99999 each returned exactly 500 documents with responseHeader.params.rows echoed as "500".
+    The echo is the sole signal. Paginate with start, not by raising rows.
+- name: Crawl delay
+  scope: crawler
+  metric: seconds-between-requests
+  limit: 30
+  enforced: false
+  observed: true
+  evidence:
+    url: https://repository.library.brown.edu/robots.txt
+    status: 200
+    directive: 'Crawl-delay: 30'
+  notes: >-
+    Advisory. robots.txt also disallows /storage, /iiif, /iiif/image, /services, /viewers,
+    /studio/login/ and /Shibboleth.sso/Login — note that /iiif is disallowed even though the item API
+    hands out IIIF URLs, so an automated client following the API's own links is walking into a
+    disallowed path.
+- name: Cloudflare bot protection
   scope: client
-  metric: requests-per-minute
-  limit: see service documentation
-  notes: No published global limit; large harvests may be rate-limited.
+  metric: unspecified
+  limit: unpublished
+  enforced: true
+  observed: true
+  evidence:
+    url: https://repository.library.brown.edu/studio/api-docs/
+    status: 200
+    body_shape: Cloudflare Turnstile interstitial
+  notes: >-
+    Brown's own wiki states it directly: "In Spring 2025 we added features from Cloudflare to protect
+    against bot traffic. This may affect users of the API, particularly if you are requesting a large
+    volume of items at a high rate." Brown advises affiliates to connect over VPN to reduce the impact
+    and to open a GitHub issue if it breaks a client. Observed firing on the /studio/ human surface;
+    the /api/ JSON endpoints were not challenged at probe volume.
 policies:
-- name: Backoff Strategy
-  description: Exponential backoff with jitter; honor Retry-After; harvest during off-peak hours.
+- name: Backoff strategy
+  description: >-
+    No published guidance beyond Brown's Cloudflare notice. Exponential backoff with jitter, page by
+    start rather than by rows, and harvest off-peak. There is no Retry-After to honor.
+- name: Escalation path
+  description: >-
+    Brown names one: open an issue on
+    https://github.com/Brown-University-Library/bdr_api_documentation/issues if bot protection is
+    blocking legitimate API use. That is an unusually concrete escalation route for a university API.
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com

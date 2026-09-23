@@ -1,0 +1,27 @@
+{
+  "example": "BDR API root index",
+  "provider": "Brown University",
+  "providerId": "brown",
+  "generated": "2026-08-30",
+  "method": "searched",
+  "source": "https://repository.library.brown.edu/api/",
+  "x-operator": "institution",
+  "request": {
+    "method": "GET",
+    "url": "https://repository.library.brown.edu/api/",
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "collections": "https://repository.library.brown.edu/api/collections/",
+      "api docs": "https://repository.library.brown.edu/studio/api-docs/"
+    }
+  },
+  "note": "Verbatim live response, 141 bytes. The API root is a two-key link index, not a spec document.",
+  "method_note": "Response body is Brown's, captured verbatim from a live probe on 2026-08-30; the surrounding request/response wrapper is API Evangelist's.",
+  "probed": "2026-08-30"
+}

@@ -1,0 +1,158 @@
+{
+  "example": "BDR item API \u2014 a single repository object",
+  "provider": "Brown University",
+  "providerId": "brown",
+  "generated": "2026-08-30",
+  "method": "derived",
+  "source": "https://repository.library.brown.edu/api/items/bdr:80246/",
+  "x-operator": "institution",
+  "request": {
+    "method": "GET",
+    "url": "https://repository.library.brown.edu/api/items/bdr:80246/",
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "pid": "bdr:80246",
+      "object_created_dsi": "2012-07-02T08:20:56.449Z",
+      "object_last_modified_dsi": "2023-02-18T22:02:41.302Z",
+      "storage_location_ssi": "ocfl",
+      "rel_object_type_ssi": "image",
+      "object_type": "image",
+      "primary_title": "Abe Lincoln as a babe, as a boy and youth",
+      "uri": "https://repository.library.brown.edu/studio/item/bdr:80246/",
+      "json_uri": "https://repository.library.brown.edu/api/items/bdr:80246/",
+      "api_links": {
+        "collections": {
+          "Lincoln Broadsides": "https://repository.library.brown.edu/api/collections/bdr:26147/"
+        },
+        "keywords": {
+          "Childhood and youth": "https://repository.library.brown.edu/api/search/?q='Childhood%20and%20youth'"
+        }
+      },
+      "links": {
+        "thumbnail": "https://repository.library.brown.edu/viewers/image/thumbnail/bdr:80246/",
+        "descriptive_datastreams": {
+          "MODS": "https://repository.library.brown.edu/storage/bdr:80246/MODS/"
+        },
+        "content_datastreams": {
+          "highres": "https://repository.library.brown.edu/storage/bdr:80246/highres/",
+          "lowres": "https://repository.library.brown.edu/storage/bdr:80246/lowres/"
+        },
+        "views": {
+          "Detailed Image Viewer": "https://repository.library.brown.edu/viewers/image/zoom/bdr:80246/",
+          "Mirador Viewer": "https://repository.library.brown.edu/viewers/mirador/bdr:80246/",
+          "Universal Viewer": "https://repository.library.brown.edu/viewers/universal/bdr:80246/",
+          "Medium Resolution": "https://repository.library.brown.edu/viewers/image/medium/bdr:80246/",
+          "iiif_image_info": "https://repository.library.brown.edu/iiif/image/bdr:80246/info.json",
+          "iiif_manifest": "https://repository.library.brown.edu/iiif/presentation/bdr:80246/manifest.json"
+        },
+        "collections": {
+          "Lincoln Broadsides": "https://repository.library.brown.edu/studio/collections/bdr:26147/"
+        },
+        "media_streams": [],
+        "keywords": {
+          "Childhood and youth": "https://repository.library.brown.edu/studio/search/?q=\"Childhood and youth\""
+        }
+      },
+      "views_dict": {
+        "Detailed Image Viewer": "https://repository.library.brown.edu/viewers/image/zoom/bdr:80246/",
+        "Mirador Viewer": "https://repository.library.brown.edu/viewers/mirador/bdr:80246/",
+        "Universal Viewer": "https://repository.library.brown.edu/viewers/universal/bdr:80246/",
+        "Medium Resolution": "https://repository.library.brown.edu/viewers/image/medium/bdr:80246/",
+        "iiif_image_info": "https://repository.library.brown.edu/iiif/image/bdr:80246/info.json",
+        "iiif_manifest": "https://repository.library.brown.edu/iiif/presentation/bdr:80246/manifest.json"
+      },
+      "brief": {
+        "full_title": [
+          "Abe Lincoln as a babe, as a boy and youth: an overlooked interview with Dennis F. Hanks, May 1892, a cousin and close companion of Lincoln"
+        ],
+        "title": [
+          "Abe Lincoln as a babe, as a boy and youth"
+        ],
+        "subtitle": [
+          "an overlooked interview with Dennis F. Hanks, May 1892, a cousin and close companion of Lincoln"
+        ],
+        "series": [
+          "http://dl.lib.brown.edu/lincoln/broadsides/index.html"
+        ],
+        "abstract": [
+          "Interview about Abraham Lincoln."
+        ],
+        "keywords": [
+          "Childhood and youth"
+        ],
+        "contributors": [
+          "McIntyre, Duncan T. (creator)",
+          "Hanks, Dennis Friend, 1799-1892 (creator)"
+        ],
+        "date issued": [
+          "1926"
+        ]
+      },
+      "relations": {
+        "hasAnnotation": [],
+        "hasDerivation": [],
+        "hasDescription": [],
+        "hasTranscript": [],
+        "hasTranslation": [],
+        "hasPart": [],
+        "isDerivationOf": [],
+        "isVersionOf": [],
+        "isTranscriptOf": [],
+        "isTranslationOf": [],
+        "isMemberOf": [],
+        "isPartOf": [],
+        "isMemberOfCollection": [
+          {
+            "pid": "bdr:26147",
+            "id": "bdr:26147",
+            "json_uri": "https://repository.library.brown.edu/api/collections/bdr:26147/",
+            "uri": "https://repository.library.brown.edu/studio/collections/bdr:26147/",
+            "db_id": 575,
+            "name": "Lincoln Broadsides",
+            "description": "Brown's Lincoln Broadsides collection comprises an assortment of printed materials intended for broad public distribution in a variety of formats. Within this digital collection you will find, for example: handbills (a single sheet of text intended for wide public distribution), leaftlets (a handbill folded to create multiple leaves), small pamphlets (unbound booklets, typically stapled or sewn), souvenir cards, circulars, broadsheets, brochures.  These materials encompass a relatively wide range of content and often incorporate graphic images as an adjunct to printed text. They range in date from the 1840s through the 1920s, and cover both events in which Lincoln was actually involved and those that revolved around the use of his public image.",
+            "tags": [],
+            "thumbnail_url": "https://repository.library.brown.edu/storage/bdr:26147/thumbnail/",
+            "parent_folders": [
+              {
+                "pid": "bdr:qpubn7sw",
+                "id": "bdr:qpubn7sw",
+                "json_uri": "https://repository.library.brown.edu/api/collections/bdr:qpubn7sw/",
+                "uri": "https://repository.library.brown.edu/studio/collections/bdr:qpubn7sw/",
+                "db_id": 468,
+                "name": "Brown University Library",
+                "description": "The Brown University Library, in support of the University's educational and research mission, is the local repository for and the principal gateway to current information and the scholarly record. \r\n\r\nAs such, it is simultaneously collection, connection, and classroom, primarily for the current and future students and faculty of the University, while also serving other colleagues in the University community and our regional, national, and global communities of learning and scholarship.",
+                "tags": [],
+                "thumbnail_url": "https://repository.library.brown.edu/storage/bdr:qpubn7sw/thumbnail/"
+              },
+              {
+                "pid": "bdr:2tsnkczm",
+                "id": "bdr:2tsnkczm",
+                "json_uri": "https://repository.library.brown.edu/api/collections/bdr:2tsnkczm/",
+                "uri": "https://repository.library.brown.edu/studio/collections/bdr:2tsnkczm/",
+                "name": "Military and Society",
+                "description": "Digital collections that fall under the John Hay Library\u2019s Military and Society STRATEGIC COLLECTION DIRECTION. Here you will find digitized materials that trace the social, political, economic, and cultural influence of world militaries during war and peace. The anchor for this collecting area is the Anne S. K. Brown Military Collection, an internationally renowned collection originally devoted to the study of military and naval uniforms and iconography.",
+                "tags": [],
+                "thumbnail_url": "https://repository.library.brown.edu/storage/bdr:2tsnkczm/thumbnail/"
+              }
+            ],
+            "child_folders": [],
+            "ancestors": [
+              "Brown University Library",
+              "Military and Society"
+            ]
+          }
+        ]
+      },
+      "_truncation_note": "Live response held 92 top-level keys; this example keeps the 13 that document the contract shape. Full payload: https://repository.library.brown.edu/api/items/bdr:80246/"
+    }
+  },
+  "note": "Trimmed from the verbatim live response (14,223 bytes). Nothing was invented; keys were dropped, not added. Note api_links and links: the item API returns dereferenceable URLs to the collection API, the search API, the IIIF image info document and the IIIF presentation manifest.",
+  "method_note": "Response body is Brown's but was TRIMMED for size \u2014 keys were dropped, never added. See _truncation_note in the body and the source URL for the full payload.",
+  "probed": "2026-08-30"
+}

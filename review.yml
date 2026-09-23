@@ -3,45 +3,205 @@ name: Brown University
 description: Brown University public developer/API footprint review for APIs.json cataloging.
 url: https://raw.githubusercontent.com/api-evangelist/brown/refs/heads/main/review.yml
 created: '2026-06-03'
-modified: '2026-06-03'
+modified: '2026-08-30'
 reviews:
-  - date: '2026-06-03'
-    rating: 3
-    summary: >-
-      Verified live: the Brown Digital Repository (BDR) public search API
-      (/api/search/ returned 200), the BDR IIIF service (/iiif/ returned 200),
-      the BDR API docs page (200, though served behind a human-verification gate),
-      the Shibboleth/SAML SSO IdP, the official website, and the active
-      "Brown University Library" GitHub organization. The historical hackatbrown
-      student API (api.students.brown.edu) is now defunct (404) and was not
-      cataloged as a live API. No fabricated endpoints were included; SIS/course
-      systems are gated behind Brown authentication and not publicly documented.
-    endpoints:
-      - url: https://repository.library.brown.edu/api/search/
-        status: 200
-        note: BDR public search API, returns JSON; confirmed live.
-      - url: https://repository.library.brown.edu/studio/api-docs/
-        status: 200
-        note: BDR API documentation page; behind a bot/human-verification gate.
-      - url: https://repository.library.brown.edu/iiif/
-        status: 200
-        note: BDR IIIF image/presentation service; confirmed live.
-      - url: https://repository.library.brown.edu/
-        status: 200
-        note: Brown Digital Repository home.
-      - url: https://sso.brown.edu/idp/shibboleth
-        status: 200
-        note: Shibboleth/SAML 2.0 identity provider (InCommon federated).
-      - url: https://github.com/Brown-University-Library
-        status: 200
-        note: Active GitHub org, ~264 repositories incl. BDR API tools.
-      - url: https://www.brown.edu
-        status: 200
-        note: Official university website.
-      - url: https://api.students.brown.edu
-        status: 404
-        note: Historical hackatbrown student API backend; now defunct.
-      - url: https://www.re3data.org/repository/r3d100011654
-        status: 200
-        note: re3data registry entry for the Brown Digital Repository.
----
+- date: '2026-08-30'
+  rating: 4
+  pipeline: university
+  summary: >-
+    Full re-profile under the university pipeline, with operator attribution settled before anything
+    was saved. Brown came through the audit clean — no vendor contract had been attributed to it, so
+    nothing had to be removed. What the re-profile added is the contract work the June 2026 pass did
+    not do: two derived OpenAPI documents for the surfaces Brown actually operates, eleven JSON
+    Schemas, seven captured example payloads, a Solr field vocabulary, an errors artifact, an
+    authentication artifact, a lifecycle artifact, a Spectral ruleset that was actually run, a
+    conformance artifact against the education regime, and an identity-federation artifact with both
+    SAML metadata documents archived.
+
+    Three surfaces are institution-operated and were confirmed by address ownership rather than by
+    hostname. sso.brown.edu resolves to 128.148.252.212 (netname BROWN-UNIV, Brown University, ARIN)
+    behind a TLS certificate whose subject is "O=Brown University" issued by InCommon's OV CA — the
+    same check that reclassified Monash's and Melbourne's identity providers as tenant surfaces, and
+    Brown passes it. The BDR is Brown University Library software, published open source in Brown's
+    own GitHub org and registered with DataCite as client BROWN.BDR.
+
+    Four surfaces are tenant relationships and were recorded rather than credited: Ex Libris Primo VE
+    (bruknow.library.brown.edu terminates on Ex Libris (USA) Inc address space), Leepfrog CourseLeaf
+    twice (cab.brown.edu, bulletin.brown.edu), and LiveWhale (events.brown.edu). Two of them serve
+    substantial keyless public JSON that would have inflated Brown's apparent footprint considerably
+    if attributed to the institution — Courses@Brown returns full course-section data on a POST API,
+    Events@Brown a 3MB JSON feed plus an iCal feed.
+
+    Three corrections were made to existing artifacts. The rate-limits artifact had advised honoring
+    throttling on OAI-PMH endpoints; Brown has none, on any of seven probed paths, so the guidance
+    was describing a surface that does not exist. The plans artifact listed course and open-metadata
+    interfaces among Brown's free public APIs; both are tenant or nonexistent. The deliveryModel
+    block read commercial:true, open_source:false, callable_host:false — all three wrong.
+
+    Direction of travel: this re-profile should RAISE Brown's composite, and unusually for this
+    cohort that is legitimate rather than a misattribution artifact. It rises because Brown genuinely
+    operates a live keyless API that had no contract, no schemas and no examples in the repo, not
+    because someone else's contract was attributed to it.
+  endpoints:
+  - url: https://repository.library.brown.edu/api/
+    status: 200
+    note: BDR API root link index. 141 bytes of JSON — collections plus a docs URL.
+  - url: https://repository.library.brown.edu/api/search/?q=*&rows=1
+    status: 200
+    note: Solr search API, keyless. numFound 1,147,400 public objects.
+  - url: https://repository.library.brown.edu/api/items/bdr:80246/
+    status: 200
+    note: Item API, 14,223 bytes, link-rich — dereferences to collections, search, IIIF and MODS.
+  - url: https://repository.library.brown.edu/api/collections/
+    status: 200
+    note: Top-level collections only, 165,528 bytes.
+  - url: https://repository.library.brown.edu/api/collections/403/
+    status: 200
+    note: 'Numeric collection id accepted alongside bdr: PIDs.'
+  - url: https://repository.library.brown.edu/api/items/bdr:0000000/
+    status: 404
+    note: >-
+      Unknown PID returns a nine-byte text/html "Not Found", not the 403 Brown's own documentation
+      promises and not JSON.
+  - url: https://repository.library.brown.edu/api/search/?q=%5B
+    status: 200
+    note: >-
+      Malformed Solr query returns 200 with an empty result set, not the documented 400. A caller
+      cannot distinguish a broken query from a genuine zero-result search.
+  - url: https://repository.library.brown.edu/api/search/?q=*&rows=99999
+    status: 200
+    note: rows silently clamped to 500. Undocumented, and visible only in the echoed params.
+  - url: https://repository.library.brown.edu/iiif/image/bdr:80246/info.json
+    status: 200
+    note: IIIF Image API 2.x. 6335x8560 source, seven-step size pyramid, 512x512 tiles.
+  - url: https://repository.library.brown.edu/iiif/presentation/bdr:80246/manifest.json
+    status: 200
+    note: IIIF Presentation API 2.x, sc:Manifest with MODS-projected metadata.
+  - url: https://repository.library.brown.edu/iiif/image/bdr:1002496/info.json
+    status: 404
+    note: >-
+      A video object that returns 200 from the item API returns 404 from IIIF. Repository presence
+      does not imply IIIF presence.
+  - url: https://repository.library.brown.edu/storage/bdr:80246/MODS/
+    status: 200
+    note: Raw MODS XML per object, 3,710 bytes.
+  - url: https://repository.library.brown.edu/studio/api-docs/
+    status: 200
+    note: >-
+      Serves a Cloudflare Turnstile interstitial to non-browser clients under HTTP 200. The human
+      documentation surface is bot-blocked while the JSON API behind it is wide open — the inverse of
+      the usual pattern.
+  - url: https://github.com/Brown-University-Library/bdr_api_documentation/wiki
+    status: 200
+    note: >-
+      Brown's real API documentation, authored by named Library staff, seven revisions, last edited
+      2026-05-27. Used as the primary documentation pointer because it is not challenge-gated.
+  - url: https://sso.brown.edu/idp/shibboleth
+    status: 200
+    note: >-
+      Self-published SAML 2.0 EntityDescriptor, 5,652 bytes of application/xml. IDPSSODescriptor plus
+      AttributeAuthorityDescriptor, scope brown.edu.
+  - url: https://mdq.incommon.org/entities/https%3A%2F%2Fsso.brown.edu%2Fidp%2Fshibboleth
+    status: 200
+    note: >-
+      InCommon-signed federation entry, 8,787 bytes. Four entity categories including InCommon and
+      REFEDS Research & Scholarship and REFEDS Sirtfi, with a dedicated security contact.
+  - url: https://api.datacite.org/clients/brown.bdr
+    status: 200
+    note: DataCite client BROWN.BDR, "Brown Digital Repository", 14,089 DOIs on prefix 10.26300.
+  - url: https://repository.library.brown.edu/api/search/?q=mods_id_doi_ssi:*&rows=0
+    status: 200
+    note: >-
+      11,622 public objects expose a DOI through Brown's own contract. The queryable field is the
+      singular mods_id_doi_ssi; the plural form matches 2 objects and misleads anyone who guesses.
+  - url: https://repository.library.brown.edu/oai/?verb=Identify
+    status: 404
+    note: >-
+      No OAI-PMH. Also probed 404 at /oai, /oai2, /oai-pmh, /api/oai and /services/oai;
+      oai.library.brown.edu does not resolve.
+  - url: https://bruknow.library.brown.edu/discovery/search?vid=01BU_INST:BROWN
+    status: 200
+    note: >-
+      TENANT. CNAME to brown.primo.exlibrisgroup.com, IP 216.147.212.109 = EXLIBRIS-20-1, Ex Libris
+      (USA) Inc. Not credited to Brown.
+  - url: https://cab.brown.edu/api/?page=fose&route=search
+    status: 200
+    note: >-
+      TENANT. 493,607 bytes of course-section JSON for one keyword, keyless. cab.brown.edu CNAMEs to
+      brown-fs.courseleaf.com — Leepfrog CourseLeaf. The richest machine-readable Brown data in
+      public, and not Brown's engineering.
+  - url: https://events.brown.edu/live/json/events
+    status: 200
+    note: >-
+      TENANT. 3,128,496 bytes of events JSON, plus an RFC 5545 iCal feed at /live/ical/events.
+      events.brown.edu CNAMEs to brown-prod.lwcal.com — LiveWhale.
+  - url: https://bulletin.brown.edu/
+    status: 200
+    note: TENANT. CNAME to brown-public.courseleaf.com. CourseLeaf CAT, human-readable only.
+  - url: https://api.brown.edu/
+    status: 0
+    note: DNS does not resolve. No central Brown API host.
+  - url: https://data.brown.edu/
+    status: 0
+    note: DNS does not resolve. No open data portal.
+  - url: https://developer.brown.edu/
+    status: 0
+    note: DNS does not resolve. No developer portal.
+  - url: https://www.brown.edu/.well-known/security.txt
+    status: 404
+    note: No RFC 9116 security.txt.
+  - url: https://www.brown.edu/llms.txt
+    status: 404
+    note: No llms.txt on the main site or on the repository host.
+  - url: https://api.students.brown.edu
+    status: 404
+    note: >-
+      Student-built Hack@Brown course backend. Already dead at the 2026-06-03 review and still dead.
+      Retained as a lifecycle fact, not catalogued as an API.
+  - url: https://www.linkedin.com/school/brown-university/
+    status: 999
+    note: >-
+      LinkedIn's anti-automation status, not a dead link. Graded live; a browser reaches the page
+      normally.
+  - url: https://www.re3data.org/repository/r3d100011654
+    status: 200
+    note: re3data registry entry for the Brown Digital Repository. Third-party corroboration of operator.
+- date: '2026-06-03'
+  rating: 3
+  summary: >-
+    Verified live: the Brown Digital Repository (BDR) public search API
+    (/api/search/ returned 200), the BDR IIIF service (/iiif/ returned 200),
+    the BDR API docs page (200, though served behind a human-verification gate),
+    the Shibboleth/SAML SSO IdP, the official website, and the active
+    "Brown University Library" GitHub organization. The historical hackatbrown
+    student API (api.students.brown.edu) is now defunct (404) and was not
+    cataloged as a live API. No fabricated endpoints were included; SIS/course
+    systems are gated behind Brown authentication and not publicly documented.
+  endpoints:
+  - url: https://repository.library.brown.edu/api/search/
+    status: 200
+    note: BDR public search API, returns JSON; confirmed live.
+  - url: https://repository.library.brown.edu/studio/api-docs/
+    status: 200
+    note: BDR API documentation page; behind a bot/human-verification gate.
+  - url: https://repository.library.brown.edu/iiif/
+    status: 200
+    note: BDR IIIF image/presentation service; confirmed live.
+  - url: https://repository.library.brown.edu/
+    status: 200
+    note: Brown Digital Repository home.
+  - url: https://sso.brown.edu/idp/shibboleth
+    status: 200
+    note: Shibboleth/SAML 2.0 identity provider (InCommon federated).
+  - url: https://github.com/Brown-University-Library
+    status: 200
+    note: Active GitHub org, ~264 repositories incl. BDR API tools.
+  - url: https://www.brown.edu
+    status: 200
+    note: Official university website.
+  - url: https://api.students.brown.edu
+    status: 404
+    note: Historical hackatbrown student API backend; now defunct.
+  - url: https://www.re3data.org/repository/r3d100011654
+    status: 200
+    note: re3data registry entry for the Brown Digital Repository.

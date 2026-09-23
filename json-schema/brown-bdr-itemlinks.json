@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/brown/refs/heads/main/json-schema/brown-bdr-itemlinks.json",
+  "title": "ItemLinks",
+  "x-provenance": {
+    "generated": "2026-08-30",
+    "method": "derived",
+    "source": "Derived from openapi/brown-bdr-api-openapi.yml and openapi/brown-bdr-iiif-openapi.yml, which were themselves derived from Brown's own API documentation wiki plus live probes on 2026-08-30. Brown publishes no JSON Schema. Not a Brown-authored artifact.",
+    "x-operator": "institution"
+  },
+  "type": "object",
+  "properties": {
+    "thumbnail": {
+      "type": "string",
+      "format": "uri"
+    },
+    "descriptive_datastreams": {
+      "type": "object",
+      "description": "Descriptive metadata datastreams. `MODS` is the descriptive standard the BDR serves, as XML.",
+      "additionalProperties": {
+        "type": "string",
+        "format": "uri"
+      }
+    },
+    "content_datastreams": {
+      "type": "object",
+      "description": "Binary content datastreams, e.g. `highres`, `lowres`.",
+      "additionalProperties": {
+        "type": "string",
+        "format": "uri"
+      }
+    },
+    "views": {
+      "type": "object",
+      "description": "Viewer and IIIF endpoints, including `iiif_image_info` and `iiif_manifest`. These are the documented route from the item API into the IIIF surface; the IIIF paths are not otherwise discoverable, and `/iiif` is disallowed in the repository's robots.txt.",
+      "additionalProperties": {
+        "type": "string",
+        "format": "uri"
+      }
+    }
+  }
+}

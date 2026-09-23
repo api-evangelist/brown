@@ -1,0 +1,123 @@
+# Spectral ruleset for the Brown Digital Repository API contract.
+#
+# Provenance
+#   generated: 2026-08-30
+#   method: derived
+#   source: openapi/brown-bdr-api-openapi.yml, openapi/brown-bdr-iiif-openapi.yml, and the
+#           behaviours probed on 2026-08-30 and recorded in errors/brown-bdr-errors.yml.
+#   x-operator: institution
+#   note: Brown publishes no governance ruleset. This is API Evangelist's, written to hold the
+#         specific defects observed on this surface — not a generic style guide. Every custom rule
+#         below exists because a real probe found the thing it checks for. Built on Spectral's
+#         built-in oas ruleset only; no external rulesets are fetched.
+extends: [[spectral:oas, recommended]]
+documentationUrl: https://raw.githubusercontent.com/api-evangelist/brown/refs/heads/main/rules/brown-bdr-spectral-ruleset.yml
+rules:
+  bdr-operator-declared:
+    description: >-
+      Every contract in a university repo must declare who operates the thing it describes. This is
+      the rule the June 2026 university cohort lacked, and its absence is how one vendor contract
+      came to be attributed to twenty-five institutions.
+    message: 'info.x-operator is required and must be institution, tenant, vendor or placeholder'
+    severity: error
+    given: $.info
+    then:
+      - field: x-operator
+        function: truthy
+      - field: x-operator
+        function: enumeration
+        functionOptions:
+          values: [institution, tenant, vendor, placeholder]
+  bdr-operator-basis-stated:
+    description: An operator verdict without a stated basis is an assertion, not a finding.
+    message: 'info.x-operator-basis must explain how the operator verdict was reached'
+    severity: error
+    given: $.info
+    then:
+      field: x-operator-basis
+      function: truthy
+  bdr-provenance-stamped:
+    description: >-
+      An unmarked artifact is credited to the institution as though they published it. Brown
+      published no OpenAPI; this document must say so.
+    message: 'info.x-provenance must carry generated, method and source'
+    severity: error
+    given: $.info.x-provenance
+    then:
+      - field: generated
+        function: truthy
+      - field: method
+        function: truthy
+      - field: source
+        function: truthy
+  bdr-server-is-brown-owned:
+    description: >-
+      Guards the specific failure this pipeline exists to prevent — a vendor host appearing in a
+      contract saved under a university's slug.
+    message: 'servers[].url must be under brown.edu'
+    severity: error
+    given: $.servers[*].url
+    then:
+      function: pattern
+      functionOptions:
+        match: '^https://[a-z0-9.-]*\.brown\.edu(/|$)'
+  bdr-no-vendor-identity:
+    description: >-
+      A spec whose title names a repository or research-information vendor is that vendor's
+      contract, wherever it was fetched from.
+    message: 'info.title must not name a repository/CRIS vendor platform'
+    severity: error
+    given: $.info.title
+    then:
+      function: pattern
+      functionOptions:
+        notMatch: '/(figshare|elsevier|\bpure\b|ex libris|exlibris|symplectic|dataverse|eprints|dspace|canvas|instructure|workday|courseleaf|primo|alma|esploro)/i'
+  bdr-pagination-cap-documented:
+    description: >-
+      The search API silently clamps rows to 500. A contract that lets a caller ask for more without
+      saying what happens will produce silently truncated harvests.
+    message: 'The rows parameter must declare its maximum'
+    severity: error
+    given: $.paths['/api/search/'].get.parameters[?(@.name == 'rows')].schema
+    then:
+      field: maximum
+      function: truthy
+  bdr-error-responses-declared:
+    description: >-
+      Every GET must declare at least one non-2xx response. The BDR returns nine-byte text/html
+      bodies on failure; a contract that omits them lets a client assume JSON always parses.
+    message: 'Operation declares no error responses'
+    severity: warn
+    given: $.paths[*].get.responses
+    then:
+      function: schema
+      functionOptions:
+        schema:
+          type: object
+          minProperties: 2
+  bdr-operation-has-description:
+    message: 'Every operation needs a description, not just a summary'
+    severity: warn
+    given: $.paths[*][get,post,put,patch,delete]
+    then:
+      field: description
+      function: truthy
+  bdr-parameter-has-description:
+    message: 'Every parameter needs a description'
+    severity: warn
+    given: $.paths[*][*].parameters[*]
+    then:
+      field: description
+      function: truthy
+  bdr-observed-divergence-flagged:
+    description: >-
+      Informational. Brown documents 400 and 403 responses that no probe reproduced, and the
+      contract records the divergence rather than repeating the claim. Kept as a rule so a future
+      re-probe that removes the divergence also has to remove the note deliberately.
+    message: 'Search operation should retain the documented-vs-observed note on error behaviour'
+    severity: info
+    given: $.paths['/api/search/'].get.description
+    then:
+      function: pattern
+      functionOptions:
+        match: '/(divergence|observed)/i'

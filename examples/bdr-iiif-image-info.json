@@ -1,0 +1,115 @@
+{
+  "example": "BDR IIIF Image API 2.1 info.json",
+  "provider": "Brown University",
+  "providerId": "brown",
+  "generated": "2026-08-30",
+  "method": "searched",
+  "source": "https://repository.library.brown.edu/iiif/image/bdr:80246/info.json",
+  "x-operator": "institution",
+  "request": {
+    "method": "GET",
+    "url": "https://repository.library.brown.edu/iiif/image/bdr:80246/info.json",
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "@context": "http://iiif.io/api/image/2/context.json",
+      "@id": "https://repository.library.brown.edu/iiif/image/bdr:80246",
+      "protocol": "http://iiif.io/api/image",
+      "width": 6335,
+      "height": 8560,
+      "sizes": [
+        {
+          "width": 99,
+          "height": 134
+        },
+        {
+          "width": 198,
+          "height": 268
+        },
+        {
+          "width": 396,
+          "height": 535
+        },
+        {
+          "width": 792,
+          "height": 1070
+        },
+        {
+          "width": 1584,
+          "height": 2140
+        },
+        {
+          "width": 3168,
+          "height": 4280
+        },
+        {
+          "width": 6335,
+          "height": 8560
+        }
+      ],
+      "tiles": [
+        {
+          "width": 512,
+          "height": 512,
+          "scaleFactors": [
+            1,
+            2,
+            4,
+            8,
+            16,
+            32,
+            64
+          ]
+        }
+      ],
+      "profile": [
+        "http://iiif.io/api/image/2/level2.json",
+        {
+          "formats": [
+            "tif",
+            "jpg",
+            "gif",
+            "png"
+          ],
+          "maxArea": 81341400,
+          "qualities": [
+            "bitonal",
+            "default",
+            "gray",
+            "color"
+          ],
+          "supports": [
+            "regionByPx",
+            "sizeByW",
+            "sizeByWhListed",
+            "cors",
+            "regionSquare",
+            "sizeByDistortedWh",
+            "sizeAboveFull",
+            "canonicalLinkHeader",
+            "sizeByConfinedWh",
+            "sizeByPct",
+            "jsonldMediaType",
+            "regionByPct",
+            "rotationArbitrary",
+            "sizeByH",
+            "baseUriRedirect",
+            "rotationBy90s",
+            "profileLinkHeader",
+            "sizeByForcedWh",
+            "sizeByWh",
+            "mirroring"
+          ]
+        }
+      ]
+    }
+  },
+  "note": "Verbatim live response. @context is http://iiif.io/api/image/2/context.json \u2014 IIIF Image API 2.x.",
+  "method_note": "Response body is Brown's, captured verbatim from a live probe on 2026-08-30; the surrounding request/response wrapper is API Evangelist's.",
+  "probed": "2026-08-30"
+}

@@ -1,0 +1,49 @@
+{
+  "example": "BDR collection API \u2014 top-level collections",
+  "provider": "Brown University",
+  "providerId": "brown",
+  "generated": "2026-08-30",
+  "method": "derived",
+  "source": "https://repository.library.brown.edu/api/collections/",
+  "x-operator": "institution",
+  "request": {
+    "method": "GET",
+    "url": "https://repository.library.brown.edu/api/collections/",
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "collections": [
+        {
+          "pid": "bdr:k499pm6d",
+          "id": "bdr:k499pm6d",
+          "json_uri": "https://repository.library.brown.edu/api/collections/bdr:k499pm6d/",
+          "uri": "https://repository.library.brown.edu/studio/collections/bdr:k499pm6d/",
+          "db_id": 995,
+          "name": "AMS Multidisciplinary Poster Collections",
+          "description": "This collection houses works from Warren Alpert Medical School students and faculty presented at a variety of scholarly conferences and scientific meetings for their specialties. For more medical student works please visit the Warren Alpert Medical School Academic Symposium collection and tWarren Alpert Medical School Scholarly Concentrations Gallery of Scholarly Work collection.",
+          "tags": [],
+          "thumbnail_url": "https://repository.library.brown.edu/storage/bdr:k499pm6d/thumbnail/"
+        },
+        {
+          "pid": "bdr:4xyzn7y2",
+          "id": "bdr:4xyzn7y2",
+          "json_uri": "https://repository.library.brown.edu/api/collections/bdr:4xyzn7y2/",
+          "uri": "https://repository.library.brown.edu/studio/collections/bdr:4xyzn7y2/",
+          "db_id": 674,
+          "name": "Africana Studies",
+          "description": "Located in the historic Churchill House on the campus of Brown University, the Department of Africana Studies is the intellectual center for faculty and students interested in the artistic, historical, literary, and theoretical expressions of the various cultures of Africa and the African Diaspora. Central to the intellectual work of the department is the close collaboration of artists and scholars in examining relationships between academic and artistic knowledge about the world and human experience.",
+          "tags": []
+        }
+      ],
+      "_truncation_note": "Live response listed 155 top-level collections (165,528 bytes); two are kept here."
+    }
+  },
+  "note": "Trimmed from the verbatim live response. Brown documents that this endpoint returns only top-level collections, not the full collection tree.",
+  "method_note": "Response body is Brown's but was TRIMMED for size \u2014 keys were dropped, never added. See _truncation_note in the body and the source URL for the full payload.",
+  "probed": "2026-08-30"
+}
