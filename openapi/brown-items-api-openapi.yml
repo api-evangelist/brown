@@ -76,30 +76,6 @@ paths:
           description: Internal server error, per Brown's documented exception behaviour.
 components:
   schemas:
-    ItemLinks:
-      type: object
-      properties:
-        thumbnail:
-          type: string
-          format: uri
-        descriptive_datastreams:
-          type: object
-          description: Descriptive metadata datastreams. `MODS` is the descriptive standard the BDR serves, as XML.
-          additionalProperties:
-            type: string
-            format: uri
-        content_datastreams:
-          type: object
-          description: Binary content datastreams, e.g. `highres`, `lowres`.
-          additionalProperties:
-            type: string
-            format: uri
-        views:
-          type: object
-          description: Viewer and IIIF endpoints, including `iiif_image_info` and `iiif_manifest`. These are the documented route from the item API into the IIIF surface; the IIIF paths are not otherwise discoverable, and `/iiif` is disallowed in the repository's robots.txt.
-          additionalProperties:
-            type: string
-            format: uri
     Item:
       type: object
       description: A full object record from the item API.
@@ -143,34 +119,6 @@ components:
           type: object
           description: Per-datastream mimeType, size, SHA-512 checksum and lastModified.
           additionalProperties: true
-    CollectionRef:
-      type: object
-      properties:
-        pid:
-          type: string
-        id:
-          type: string
-        db_id:
-          type: integer
-        name:
-          type: string
-        description:
-          type: string
-        tags:
-          type: array
-          items:
-            type: string
-        json_uri:
-          type: string
-          format: uri
-          description: Collection API URL for this collection.
-        uri:
-          type: string
-          format: uri
-          description: Human web view of this collection.
-        thumbnail_url:
-          type: string
-          format: uri
     Relations:
       type: object
       description: Fixed set of relation predicates, each an array. Empty arrays are returned rather than omitted, so a client can rely on every key being present.
@@ -239,6 +187,58 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CollectionRef'
+    ItemLinks:
+      type: object
+      properties:
+        thumbnail:
+          type: string
+          format: uri
+        descriptive_datastreams:
+          type: object
+          description: Descriptive metadata datastreams. `MODS` is the descriptive standard the BDR serves, as XML.
+          additionalProperties:
+            type: string
+            format: uri
+        content_datastreams:
+          type: object
+          description: Binary content datastreams, e.g. `highres`, `lowres`.
+          additionalProperties:
+            type: string
+            format: uri
+        views:
+          type: object
+          description: Viewer and IIIF endpoints, including `iiif_image_info` and `iiif_manifest`. These are the documented route from the item API into the IIIF surface; the IIIF paths are not otherwise discoverable, and `/iiif` is disallowed in the repository's robots.txt.
+          additionalProperties:
+            type: string
+            format: uri
+    CollectionRef:
+      type: object
+      properties:
+        pid:
+          type: string
+        id:
+          type: string
+        db_id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        json_uri:
+          type: string
+          format: uri
+          description: Collection API URL for this collection.
+        uri:
+          type: string
+          format: uri
+          description: Human web view of this collection.
+        thumbnail_url:
+          type: string
+          format: uri
 x-access:
   authentication: none
   description: Every documented BDR API endpoint is anonymous and keyless. There is no API key, no OAuth flow and no registration step. The boundary is not authentication but VISIBILITY — the index exposes `_display_public_bsi`, `_display_brown_bsi` and `_display_private_bsi`, and the anonymous API sees only public objects. Brown-affiliated access to the wider set goes through the Shibboleth login the `links.login` key on every search response points at.

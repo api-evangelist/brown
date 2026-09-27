@@ -89,22 +89,6 @@ paths:
           description: Not Found. OBSERVED for an unknown collection id, as a nine-byte `text/html` body.
 components:
   schemas:
-    Collection:
-      type: object
-      description: A single collection, its sub-collections and its member items.
-      additionalProperties: true
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        items:
-          type: object
-          additionalProperties: true
-        children:
-          type: array
-          items:
-            $ref: '#/components/schemas/CollectionRef'
     CollectionList:
       type: object
       required:
@@ -142,6 +126,22 @@ components:
         thumbnail_url:
           type: string
           format: uri
+    Collection:
+      type: object
+      description: A single collection, its sub-collections and its member items.
+      additionalProperties: true
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        items:
+          type: object
+          additionalProperties: true
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/CollectionRef'
 x-access:
   authentication: none
   description: Every documented BDR API endpoint is anonymous and keyless. There is no API key, no OAuth flow and no registration step. The boundary is not authentication but VISIBILITY — the index exposes `_display_public_bsi`, `_display_brown_bsi` and `_display_private_bsi`, and the anonymous API sees only public objects. Brown-affiliated access to the wider set goes through the Shibboleth login the `links.login` key on every search response points at.
