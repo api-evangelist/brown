@@ -76,49 +76,6 @@ paths:
           description: Internal server error, per Brown's documented exception behaviour.
 components:
   schemas:
-    Item:
-      type: object
-      description: A full object record from the item API.
-      additionalProperties: true
-      required:
-      - pid
-      properties:
-        pid:
-          type: string
-        object_type:
-          type: string
-        primary_title:
-          type: string
-        uri:
-          type: string
-          format: uri
-          description: Human web view of the object.
-        json_uri:
-          type: string
-          format: uri
-          description: Self link — this item API call.
-        brief:
-          type: object
-          description: Display-oriented summary block; every value is an array of strings.
-          additionalProperties: true
-        relations:
-          $ref: '#/components/schemas/Relations'
-        api_links:
-          type: object
-          description: Dereferenceable API URLs for this object's collections and keywords.
-          additionalProperties: true
-        links:
-          $ref: '#/components/schemas/ItemLinks'
-        views_dict:
-          type: object
-          description: Named viewer and IIIF URLs. Duplicates `links.views`.
-          additionalProperties:
-            type: string
-            format: uri
-        datastreams:
-          type: object
-          description: Per-datastream mimeType, size, SHA-512 checksum and lastModified.
-          additionalProperties: true
     Relations:
       type: object
       description: Fixed set of relation predicates, each an array. Empty arrays are returned rather than omitted, so a client can rely on every key being present.
@@ -239,6 +196,49 @@ components:
         thumbnail_url:
           type: string
           format: uri
+    Item:
+      type: object
+      description: A full object record from the item API.
+      additionalProperties: true
+      required:
+      - pid
+      properties:
+        pid:
+          type: string
+        object_type:
+          type: string
+        primary_title:
+          type: string
+        uri:
+          type: string
+          format: uri
+          description: Human web view of the object.
+        json_uri:
+          type: string
+          format: uri
+          description: Self link — this item API call.
+        brief:
+          type: object
+          description: Display-oriented summary block; every value is an array of strings.
+          additionalProperties: true
+        relations:
+          $ref: '#/components/schemas/Relations'
+        api_links:
+          type: object
+          description: Dereferenceable API URLs for this object's collections and keywords.
+          additionalProperties: true
+        links:
+          $ref: '#/components/schemas/ItemLinks'
+        views_dict:
+          type: object
+          description: Named viewer and IIIF URLs. Duplicates `links.views`.
+          additionalProperties:
+            type: string
+            format: uri
+        datastreams:
+          type: object
+          description: Per-datastream mimeType, size, SHA-512 checksum and lastModified.
+          additionalProperties: true
 x-access:
   authentication: none
   description: Every documented BDR API endpoint is anonymous and keyless. There is no API key, no OAuth flow and no registration step. The boundary is not authentication but VISIBILITY — the index exposes `_display_public_bsi`, `_display_brown_bsi` and `_display_private_bsi`, and the anonymous API sees only public objects. Brown-affiliated access to the wider set goes through the Shibboleth login the `links.login` key on every search response points at.

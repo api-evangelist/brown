@@ -140,25 +140,6 @@ paths:
                 type: string
 components:
   schemas:
-    Document:
-      type: object
-      description: One indexed object. The field set is Solr-dynamic and varies by object type; `fl=*` returned 50+ fields per document at probe time. Only the fields common to every probed document are typed here — see vocabulary/brown-bdr-field-vocabulary.yml for the wider field inventory.
-      additionalProperties: true
-      properties:
-        pid:
-          type: string
-          example: bdr:80246
-        primary_title:
-          type: string
-        abstract:
-          type: array
-          items:
-            type: string
-        object_type:
-          type: string
-          example: image
-        resource_type_ssi:
-          type: string
     SearchResponse:
       type: object
       required:
@@ -200,6 +181,25 @@ components:
             login:
               type: string
               format: uri
+    Document:
+      type: object
+      description: One indexed object. The field set is Solr-dynamic and varies by object type; `fl=*` returned 50+ fields per document at probe time. Only the fields common to every probed document are typed here — see vocabulary/brown-bdr-field-vocabulary.yml for the wider field inventory.
+      additionalProperties: true
+      properties:
+        pid:
+          type: string
+          example: bdr:80246
+        primary_title:
+          type: string
+        abstract:
+          type: array
+          items:
+            type: string
+        object_type:
+          type: string
+          example: image
+        resource_type_ssi:
+          type: string
 x-access:
   authentication: none
   description: Every documented BDR API endpoint is anonymous and keyless. There is no API key, no OAuth flow and no registration step. The boundary is not authentication but VISIBILITY — the index exposes `_display_public_bsi`, `_display_brown_bsi` and `_display_private_bsi`, and the anonymous API sees only public objects. Brown-affiliated access to the wider set goes through the Shibboleth login the `links.login` key on every search response points at.
