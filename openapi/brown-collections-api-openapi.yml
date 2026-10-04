@@ -89,15 +89,6 @@ paths:
           description: Not Found. OBSERVED for an unknown collection id, as a nine-byte `text/html` body.
 components:
   schemas:
-    CollectionList:
-      type: object
-      required:
-      - collections
-      properties:
-        collections:
-          type: array
-          items:
-            $ref: '#/components/schemas/CollectionRef'
     Collection:
       type: object
       description: A single collection, its sub-collections and its member items.
@@ -111,6 +102,15 @@ components:
           type: object
           additionalProperties: true
         children:
+          type: array
+          items:
+            $ref: '#/components/schemas/CollectionRef'
+    CollectionList:
+      type: object
+      required:
+      - collections
+      properties:
+        collections:
           type: array
           items:
             $ref: '#/components/schemas/CollectionRef'
