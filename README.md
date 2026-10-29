@@ -1,4 +1,4 @@
-# Brown University (brown)
+# Brown University
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -64,95 +64,160 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Brown University is a private Ivy League research university in Providence, Rhode Island. Its genuinely institution-operated programmable footprint is narrow, real, and concentrated entirely in the Brown University Library: the Brown Digital Repository (BDR) REST API, the BDR's IIIF Image and Presentation services, and a Shibboleth SAML 2.0 identity provider. Everything else that looks like a Brown API is a vendor platform running under a Brown hostname and is recorded here as a tenant relationship, not as a Brown contract.
+Brown University is a private Ivy League research university in Providence, Rhode Island. Its genuinely institution-operated programmable footprint is narrow, real, and concentrated entirely in the Brown University Library. Three surfaces survive an operator check: the Brown Digital Repository (BDR) REST API, the BDR's IIIF Image and Presentation services, and a Shibboleth SAML 2.0 identity provider. All three sit under brown.edu, and the identity provider resolves into Brown's own ARIN allocation (BROWN-UNIV, 128.148.252.0/24) behind a Brown-procured InCommon OV certificate, so the attribution is settled by address ownership rather than by hostname. The BDR API is the substantive find: a public, keyless, Solr-backed API over 1,147,400 objects, documented by Brown Library staff in the wiki of Brown's own GitHub repository, with 11,622 objects exposing DataCite DOIs on Brown's prefix 10.26300. It is more than most universities in this cohort operate. It is also unversioned, sends no CORS headers, returns nine-byte text/html bodies on failure, silently caps results at 500 rows, and answers malformed queries with HTTP 200 and an empty result set rather than the 400 its own documentation promises. There is no OAI-PMH endpoint on any probed path — an absence worth stating, because reviewers assume an institutional repository has one. Everything else that looks like a Brown API is a vendor platform running under a Brown hostname and is recorded here as a tenant relationship, not as a Brown contract: library discovery is Ex Libris Primo VE (bruknow.library.brown.edu terminates on Ex Libris (USA) Inc address space), the course catalog and bulletin are Leepfrog CourseLeaf (cab.brown.edu and bulletin.brown.edu CNAME to courseleaf.com), and the events calendar is LiveWhale (events.brown.edu CNAMEs to lwcal.com). Two of those tenant platforms expose genuinely useful public JSON — Courses@Brown returns full section, meeting-time and instructor data with no key, and Events@Brown serves a 3MB JSON feed and an iCal feed — but that engineering is the vendor's. No central developer portal, no open data portal, and no institution-operated course or registrar API exist; the one that did, the student-built api.students.brown.edu, has been 404 since before this profile was first written.
 
-- APIs.json: https://raw.githubusercontent.com/api-evangelist/brown/refs/heads/main/apis.yml
-- Run with Naftiko: https://github.com/naftiko/fleet?utm_source=api-evangelist&utm_medium=readme&utm_campaign=brown-api-evangelist&utm_content=repo
+**Areas:** Education · Higher Education · University · United States · Ivy League · Research · Research Repository · Digital Repository · Library · IIIF · Identity Federation · Course Catalog
 
-## Type
+## Brown University on APIs.io
 
-- Index
-- university / Private Research University
-- Consumer
-- 3rd-Party
+Everything profiled for Brown University is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/brown/](https://apis.io/providers/brown/)** — or go straight to one of the APIs or properties below.
 
-## Tags
+### APIs (11)
 
-Education, Higher Education, University, United States, Ivy League, Research, Research Repository, Digital Repository, Library, IIIF, Identity Federation, Course Catalog, Research Computing
+- [Brown University Identity Provider (Shibboleth / SAML 2.0)](https://apis.io/apis/brown/idp/) — Brown's Shibboleth identity provider, and the strongest machine-readable contract in this profile. Brown self-publishes signed per-entity SAML metadata at…
+- [BruKnow Library Discovery (Ex Libris Primo VE tenant)](https://apis.io/apis/brown/bruknow/) — Brown University Library's discovery layer. search.library.brown.edu redirects to bruknow.library.brown.edu/discovery/search?vid=01BU_INST:BROWN, an Ex…
+- [Courses@Brown (Leepfrog CourseLeaf tenant)](https://apis.io/apis/brown/cab/) — Brown's course search and registration front end. It exposes a live, public, keyless JSON API at cab.brown.edu/api/ — a POST interface with page=fose routes…
+- [Brown University Bulletin (Leepfrog CourseLeaf CAT tenant)](https://apis.io/apis/brown/bulletin/) — The university's academic catalog of programs, concentrations and requirements, on the same vendor as Courses@Brown but a separate deployment.…
+- [Events@Brown (LiveWhale Calendar tenant)](https://apis.io/apis/brown/events/) — Brown's university-wide events calendar, serving a public JSON feed at /live/json/events (3,128,496 bytes on 2026-08-30) and an iCalendar feed at…
+- [Brown University Collections API](https://apis.io/apis/brown/brown-collections-api/) — Repository collections and their membership.
+- [Brown University Discovery API](https://apis.io/apis/brown/brown-discovery-api/) — The API root link index.
+- [Brown University IIIF Image API](https://apis.io/apis/brown/brown-iiif-image-api/) — IIIF Image API 2.x — image information and derivative delivery.
+- [Brown University IIIF Presentation API](https://apis.io/apis/brown/brown-iiif-presentation-api/) — IIIF Presentation API 2.x — manifests describing an object's structure and metadata.
+- [Brown University Items API](https://apis.io/apis/brown/brown-items-api/) — Metadata for a single repository object, addressed by PID.
+- [Brown University Search API](https://apis.io/apis/brown/brown-search-api/) — Solr-backed search across public BDR objects.
 
-## Who operates what
+### Published properties
 
-Every surface carries an `x-operator`. `method:` says how we came to hold an artifact; `x-operator:` says who runs the thing it describes, and for a university those are rarely the same answer. Operator was settled by DNS CNAME and IP ownership, not by hostname — all seven hosts below are under `brown.edu`, and four of them are somebody else's infrastructure.
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-### Institution-operated — Brown's own
+#### JSON Schema (11)
 
-- **Brown Digital Repository (BDR) API** — `https://repository.library.brown.edu/api/` — public, keyless, Solr-backed, 1,147,400 objects. Item, collection and search endpoints. Brown University Library software, published open source in Brown's own GitHub org; registered with DataCite as client `BROWN.BDR` with 14,089 DOIs on prefix `10.26300`. Docs: https://github.com/Brown-University-Library/bdr_api_documentation/wiki
-- **BDR IIIF Image and Presentation API** — `https://repository.library.brown.edu/iiif/` — IIIF Image API 2.x and Presentation API 2.x. Brown is a IIIF community case study.
-- **Brown University Identity Provider** — `https://sso.brown.edu/idp/` — self-published, InCommon-registered SAML 2.0 / Shibboleth metadata. Resolves into `BROWN-UNIV` (ARIN) behind a Brown-subject InCommon OV certificate.
+The data models the API reads and writes.
 
-### Tenant — Brown's data, someone else's contract
+- [ApiRoot](https://apis.io/schemas/brown/brown-bdr-apiroot/)
+- [Collection](https://apis.io/schemas/brown/brown-bdr-collection/)
+- [CollectionList](https://apis.io/schemas/brown/brown-bdr-collectionlist/)
+- [CollectionRef](https://apis.io/schemas/brown/brown-bdr-collectionref/)
+- [Document](https://apis.io/schemas/brown/brown-bdr-document/)
+- [ImageInfo](https://apis.io/schemas/brown/brown-bdr-imageinfo/)
+- [Item](https://apis.io/schemas/brown/brown-bdr-item/)
+- [ItemLinks](https://apis.io/schemas/brown/brown-bdr-itemlinks/)
+- [Manifest](https://apis.io/schemas/brown/brown-bdr-manifest/)
+- [Relations](https://apis.io/schemas/brown/brown-bdr-relations/)
+- [SearchResponse](https://apis.io/schemas/brown/brown-bdr-searchresponse/)
 
-- **BruKnow Library Discovery** — `bruknow.library.brown.edu` CNAMEs to `brown.primo.exlibrisgroup.com`; IP is Ex Libris (USA) Inc. Ex Libris Primo VE.
-- **Courses@Brown** — `cab.brown.edu` CNAMEs to `brown-fs.courseleaf.com`. Leepfrog CourseLeaf. Serves a live keyless JSON course API; the engineering is the vendor's.
-- **Brown University Bulletin** — `bulletin.brown.edu` CNAMEs to `brown-public.courseleaf.com`. CourseLeaf CAT.
-- **Events@Brown** — `events.brown.edu` CNAMEs to `brown-prod.lwcal.com`. LiveWhale Calendar; JSON and iCal feeds.
+#### JSON-LD (1)
 
-## Contracts and artifacts
+Linked-data contexts for the provider's vocabulary.
 
-Brown publishes no OpenAPI. Both specifications here are **derived** — reconciled between Brown's own prose documentation and live probes on 2026-08-30 — and are marked as such in `info.x-provenance`. They are not Brown-authored contracts.
+- [Brown Context](https://apis.io/jsonld/brown/brown-context/)
 
-- OpenAPI: [openapi/brown-bdr-api-openapi.yml](openapi/brown-bdr-api-openapi.yml), [openapi/brown-bdr-iiif-openapi.yml](openapi/brown-bdr-iiif-openapi.yml) (pristine copies in [openapi/_original/](openapi/_original/))
-- JSON Schema: [json-schema/](json-schema/) — 11 schemas
-- Examples: [examples/](examples/) — 7 captured payloads
-- Errors: [errors/brown-bdr-errors.yml](errors/brown-bdr-errors.yml)
-- Vocabulary: [vocabulary/brown-bdr-field-vocabulary.yml](vocabulary/brown-bdr-field-vocabulary.yml)
-- Rules: [rules/brown-bdr-spectral-ruleset.yml](rules/brown-bdr-spectral-ruleset.yml), [rules/brown-bdr-lint-report.yml](rules/brown-bdr-lint-report.yml)
-- Authentication: [authentication/brown-authentication.yml](authentication/brown-authentication.yml)
-- Lifecycle: [lifecycle/brown-lifecycle.yml](lifecycle/brown-lifecycle.yml)
-- Conformance: [conformance/brown-conformance.yml](conformance/brown-conformance.yml)
-- Identity Federation: [identity-federation/](identity-federation/) — analysis plus both SAML metadata documents
+#### Examples (7)
 
-## Domain standards (Kin Score `education` regime)
+Example requests and responses.
 
-Evidenced as institution-operated: **saml**, **shibboleth**, **datacite**. Partial and deliberately weak: crossref. Absent, and actively probed rather than assumed: **oai-pmh** (404 on seven candidate paths), **orcid** (zero matches index-wide). Not applicable or not found: scim, lti, oneroster, ed-fi, caliper, qti.
+- [Bdr Api Root](https://apis.io/examples/brown/bdr-api-root/)
+- [Bdr Collections Top Level](https://apis.io/examples/brown/bdr-collections-top-level/)
+- [Bdr Iiif Image Info](https://apis.io/examples/brown/bdr-iiif-image-info/)
+- [Bdr Iiif Presentation Manifest](https://apis.io/examples/brown/bdr-iiif-presentation-manifest/)
+- [Bdr Item](https://apis.io/examples/brown/bdr-item/)
+- [Bdr Search Filtered](https://apis.io/examples/brown/bdr-search-filtered/)
+- [Bdr Search Malformed Query](https://apis.io/examples/brown/bdr-search-malformed-query/)
 
-Also implemented, outside the regime list: IIIF Image 2.x, IIIF Presentation 2.x, MODS, Darwin Core (66,623 objects), FAST subject headings, Getty AAT.
+#### Governance rules (2)
 
-## Plans / Rate Limits / FinOps
+Spectral rulesets for the provider's contracts.
 
-- Plans: [plans/brown-plans-pricing.yml](plans/brown-plans-pricing.yml)
-- Rate Limits: [rate-limits/brown-rate-limits.yml](rate-limits/brown-rate-limits.yml)
-- FinOps: [finops/brown-finops.yml](finops/brown-finops.yml)
+- [Brown University — bdr lint report rules](https://apis.io/rules/brown/brown-bdr-lint-report/)
+- [Brown University — bdr rules](https://apis.io/rules/brown/brown-bdr-spectral-ruleset/)
 
-## Timestamps
+#### Security (2)
 
-- Created: 2026-06-03
-- Modified: 2026-08-30
+Authentication, trust centre, and vulnerability disclosure.
 
-## Common Properties
+- [Brown Authentication](https://apis.io/security/brown/brown-authentication/)
+- [Brown Domain Security](https://apis.io/security/brown/brown-domain-security/)
 
-- Website: https://www.brown.edu
-- GitHub: https://github.com/Brown-University-Library, https://github.com/brown-ccv
-- Documentation: https://github.com/Brown-University-Library/bdr_api_documentation/wiki
-- API Reference: https://repository.library.brown.edu/studio/api-docs/ (Cloudflare Turnstile interstitial for non-browser clients)
-- Research Repository: https://repository.library.brown.edu/studio/
-- Identity Federation: https://sso.brown.edu/idp/shibboleth
-- Research Computing: https://ccv.brown.edu/
-- AI Policy: https://provost.brown.edu/committees-and-reports/generative-ai-teaching-and-learning-gaitl-committee-charge
-- Privacy Policy: https://policy.brown.edu/policy/privacy
-- Terms of Service: https://policy.brown.edu/policy/acceptable-use-it-resources
-- Support: https://ithelp.brown.edu/
-- LinkedIn: https://www.linkedin.com/school/brown-university/
-- Review: [review.yml](review.yml)
+#### Plans and pricing (1)
 
-## Notes
+Published plans, tiers and prices.
 
-Re-profiled 2026-08-30 under the API Evangelist university pipeline. Brown came through the vendor-attribution audit clean — no vendor contract had been misattributed to it, so nothing was removed. What the pass added is the contract work that was missing: two derived OpenAPIs, eleven JSON Schemas, seven captured payloads, and the errors, vocabulary, authentication, lifecycle, conformance and identity-federation artifacts.
+- [Brown Plans Pricing](https://apis.io/plans/brown/brown-plans-pricing/)
 
-Behaviours worth knowing before integrating, all probed rather than assumed: the search API silently clamps `rows` to 500; malformed queries return HTTP 200 with an empty result set rather than the documented 400; an unknown PID returns a nine-byte `text/html` "Not Found" rather than the documented 403 and not JSON; no CORS headers are sent, and JSONP via a `callback` parameter is the documented cross-origin path; and Cloudflare bot protection added in Spring 2025 fronts the host, serving a Turnstile interstitial on the human `/studio/` surface while leaving the JSON API open.
+#### Rate limits (1)
 
-Named absences: no OAI-PMH endpoint, no open data portal, no `api.brown.edu`, no `developer.brown.edu`, no `llms.txt`, no `security.txt`, no OAuth or OIDC, and no institution-operated course or registrar API. The one that existed, the student-built `api.students.brown.edu`, has been 404 since before this profile was first written.
+Published request limits.
 
-## Maintainers
+- [Brown Rate Limits](https://apis.io/rate-limits/brown/brown-rate-limits/)
 
-- Kin Lane — kin@apievangelist.com
+#### FinOps (1)
+
+What the API costs to run, by operation.
+
+- [Brown Finops](https://apis.io/finops/brown/brown-finops/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.brown.edu)
+- [Documentation](https://github.com/Brown-University-Library/bdr_api_documentation/wiki)
+- [API reference](https://repository.library.brown.edu/studio/api-docs/)
+- [Support](https://ithelp.brown.edu/)
+- [Blog](https://www.brown.edu/news)
+- [Terms of service](https://policy.brown.edu/policy/acceptable-use-it-resources)
+- [Privacy policy](https://policy.brown.edu/policy/privacy)
+- [GitHub](https://github.com/Brown-University-Library)
+
+## API Evangelist rating
+
+**Kin Score 30.1** — thin · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 71.4 |
+| Contract quality | 24.9 |
+| Contract governance | 17.4 |
+| Operational transparency | 10.5 |
+| Developer ergonomics | 35.7 |
+| Access clarity | 26.3 |
+
+**Agent readiness 24.5** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | na |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | na |
+| Error Semantics | — |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | derived (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | na |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 24.5** — Education & Research
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/brown/](https://apis.io/providers/brown/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Brown University: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/brown/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
